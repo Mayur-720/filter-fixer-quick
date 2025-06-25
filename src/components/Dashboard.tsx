@@ -2,23 +2,25 @@
 import React, { useState, useEffect } from "react";
 import CreatorCard from "./CreatorCard";
 import WhatsAppButton from "./WhatsAppButton";
+import FilterDialog from "./FilterDialog";
 import { Creator } from "../types/Creator";
 import { creatorAPI } from "../services/api";
-import { Users, Search, ArrowUpDown } from "lucide-react";
+import { Users, Search, Filter } from "lucide-react";
 import { Input } from "./ui/input";
+import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "./ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DashboardProps {
 	activeGenre: string;
 	onCreatorClick: (creator: Creator) => void;
+}
+
+interface FilterState {
+	platform: string;
+	location: string;
+	priceRange: [number, number];
+	followersRange: [number, number];
 }
 
 const Dashboard: React.FC<DashboardProps> = ({
@@ -29,9 +31,13 @@ const Dashboard: React.FC<DashboardProps> = ({
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [searchTerm, setSearchTerm] = useState("");
-	const [sortBy, setSortBy] = useState("followers");
-	const [platformFilter, setPlatformFilter] = useState("All");
-	const [locationFilter, setLocationFilter] = useState("All");
+	const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
+	const [filters, setFilters] = useState<FilterState>({
+		platform: "All",
+		location: "All",
+		priceRange: [0, 10000],
+		followersRange: [0, 1000],
+	});
 	const isMobile = useIsMobile();
 
 	// Fetch creators from API
@@ -53,7 +59,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 		fetchCreators();
 	}, []);
 
-	// Simple filtering logic
+	// Filter creators based on search and filters
 	const getFilteredCreators = () => {
 		let filteredCreators =
 			activeGenre === "All Creators"
@@ -73,50 +79,58 @@ const Dashboard: React.FC<DashboardProps> = ({
 		}
 
 		// Apply platform filter
-		if (platformFilter !== "All") {
+		if (filters.platform !== "All") {
 			filteredCreators = filteredCreators.filter(
-				(creator) => creator.platform === platformFilter
+				(creator) => creator.platform === filters.platform
 			);
 		}
 
 		// Apply location filter
-		if (locationFilter !== "All") {
+		if (filters.location !== "All") {
 			filteredCreators = filteredCreators.filter((creator) => {
 				const creatorLocation = creator.location || creator.details?.location || "";
-				return creatorLocation === locationFilter;
+				return creatorLocation === filters.location;
 			});
 		}
+
+		// Apply price range filter
+		filteredCreators = filteredCreators.filter((creator) => {
+			const pricing = creator.details?.pricing || "₹0";
+			const priceMatch = pricing.match(/₹(\d+)/);
+			const price = priceMatch ? parseInt(priceMatch[1]) : 0;
+			return price >= filters.priceRange[0] && price <= filters.priceRange[1];
+		});
+
+		// Apply followers range filter
+		filteredCreators = filteredCreators.filter((creator) => {
+			const followers = creator.details?.analytics?.followers || 0;
+			const followersInK = followers / 1000;
+			return followersInK >= filters.followersRange[0] && followersInK <= filters.followersRange[1];
+		});
 
 		return filteredCreators;
 	};
 
-	const sortCreators = (creators: Creator[], sortBy: string) => {
-		return [...creators].sort((a, b) => {
-			switch (sortBy) {
-				case "followers":
-					return (b.details?.analytics?.followers || 0) - (a.details?.analytics?.followers || 0);
-				case "views":
-					return (b.details?.analytics?.totalViews || 0) - (a.details?.analytics?.totalViews || 0);
-				case "name":
-					return a.name.localeCompare(b.name);
-				default:
-					return 0;
-			}
-		});
-	};
-
-	const filteredCreators = sortCreators(getFilteredCreators(), sortBy);
+	const filteredCreators = getFilteredCreators();
 
 	const handleClearFilters = () => {
-		setPlatformFilter("All");
-		setLocationFilter("All");
+		setFilters({
+			platform: "All",
+			location: "All",
+			priceRange: [0, 10000],
+			followersRange: [0, 1000],
+		});
 		setSearchTerm("");
-		setSortBy("followers");
 	};
 
-	// Get unique platforms and locations for filter options
-	const platforms = ["All", ...new Set(creators.map(c => c.platform))];
-	const locations = ["All", ...new Set(creators.map(c => c.location || c.details?.location).filter(Boolean))];
+	const hasActiveFilters = 
+		filters.platform !== "All" ||
+		filters.location !== "All" ||
+		filters.priceRange[0] !== 0 ||
+		filters.priceRange[1] !== 10000 ||
+		filters.followersRange[0] !== 0 ||
+		filters.followersRange[1] !== 1000 ||
+		searchTerm !== "";
 
 	if (loading) {
 		return (
@@ -129,8 +143,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 						</div>
 						<div className="flex items-center space-x-3">
 							<Skeleton className="h-10 flex-1" />
-							<Skeleton className="h-10 w-32" />
-							<Skeleton className="h-10 w-32" />
+							<Skeleton className="h-10 w-24" />
 						</div>
 					</div>
 				</header>
@@ -184,7 +197,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 						</p>
 					</div>
 
-					{/* Search and Filters */}
+					{/* Search and Filter */}
 					<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
 						<div className="relative flex-1 min-w-0">
 							<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -196,56 +209,30 @@ const Dashboard: React.FC<DashboardProps> = ({
 							/>
 						</div>
 
-						<div className="flex items-center gap-2 flex-wrap">
-							{/* Platform Filter */}
-							<Select value={platformFilter} onValueChange={setPlatformFilter}>
-								<SelectTrigger className="w-[120px]">
-									<SelectValue placeholder="Platform" />
-								</SelectTrigger>
-								<SelectContent>
-									{platforms.map(platform => (
-										<SelectItem key={platform} value={platform}>
-											{platform}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
+						<div className="flex items-center gap-2">
+							<Button
+								variant="outline"
+								onClick={() => setIsFilterDialogOpen(true)}
+								className="flex items-center gap-2"
+							>
+								<Filter className="h-4 w-4" />
+								Filters
+								{hasActiveFilters && (
+									<span className="bg-purple-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+										!
+									</span>
+								)}
+							</Button>
 
-							{/* Location Filter */}
-							<Select value={locationFilter} onValueChange={setLocationFilter}>
-								<SelectTrigger className="w-[120px]">
-									<SelectValue placeholder="Location" />
-								</SelectTrigger>
-								<SelectContent>
-									{locations.map(location => (
-										<SelectItem key={location} value={location}>
-											{location}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-
-							{/* Sort */}
-							<Select value={sortBy} onValueChange={setSortBy}>
-								<SelectTrigger className="w-[100px] sm:w-[140px]">
-									<ArrowUpDown size={16} className="mr-2 flex-shrink-0" />
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="followers">Followers</SelectItem>
-									<SelectItem value="views">Views</SelectItem>
-									<SelectItem value="name">Name</SelectItem>
-								</SelectContent>
-							</Select>
-
-							{/* Clear Filters */}
-							{(platformFilter !== "All" || locationFilter !== "All" || searchTerm) && (
-								<button
+							{hasActiveFilters && (
+								<Button
+									variant="ghost"
+									size="sm"
 									onClick={handleClearFilters}
-									className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+									className="text-red-500 hover:text-red-700"
 								>
 									Clear
-								</button>
+								</Button>
 							)}
 						</div>
 					</div>
@@ -275,15 +262,26 @@ const Dashboard: React.FC<DashboardProps> = ({
 						<p className="text-gray-600">
 							Try adjusting your search or filters
 						</p>
-						<button
+						<Button
 							onClick={handleClearFilters}
-							className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+							className="mt-4"
+							variant="outline"
 						>
 							Clear All Filters
-						</button>
+						</Button>
 					</div>
 				)}
 			</div>
+
+			{/* Filter Dialog */}
+			<FilterDialog
+				isOpen={isFilterDialogOpen}
+				onClose={() => setIsFilterDialogOpen(false)}
+				filters={filters}
+				onFiltersChange={setFilters}
+				onClearFilters={handleClearFilters}
+			/>
+
 			{isMobile && <WhatsAppButton variant="floating" />}
 		</div>
 	);

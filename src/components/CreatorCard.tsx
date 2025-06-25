@@ -9,18 +9,18 @@ interface CreatorCardProps {
 }
 
 const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
-	const renderPlatformIcon = () => {
+	const renderPlatformIcon = (size: number = 16) => {
 		switch (creator.platform?.toLowerCase()) {
 			case "instagram":
-				return <Instagram size={16} className="text-pink-500" />;
+				return <Instagram size={size} className="text-pink-500" />;
 			case "youtube":
-				return <Youtube size={16} className="text-red-500" />;
+				return <Youtube size={size} className="text-red-500" />;
 			case "linkedin":
-				return <Linkedin size={16} className="text-blue-500" />;
+				return <Linkedin size={size} className="text-blue-500" />;
 			case "twitter":
-				return <Twitter size={16} className="text-sky-400" />;
+				return <Twitter size={size} className="text-sky-400" />;
 			default:
-				return <Instagram size={16} className="text-gray-500" />;
+				return <Instagram size={size} className="text-gray-500" />;
 		}
 	};
 
@@ -86,7 +86,7 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 						
 						<div className="flex items-center gap-2 text-sm text-gray-500">
 							<MapPin size={12} />
-							<span className="truncate">{creator.location || creator.details?.location || "Global"}</span>
+							<span className="truncate">Global</span>
 						</div>
 
 						<div className="flex flex-wrap gap-1">
@@ -117,12 +117,12 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 							href={creator.socialLink || "https://www.instagram.com/saarvendra/"}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="flex items-center gap-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md"
+							className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md"
 							aria-label={`Visit ${creator.name}'s ${creator.platform || "Instagram"} profile`}
 							onClick={(e) => e.stopPropagation()}
 						>
-							<ExternalLink size={12} />
-							Visit
+							{renderPlatformIcon(12)}
+							<span>Visit</span>
 						</a>
 					</div>
 				</div>
