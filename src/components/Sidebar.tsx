@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
 	Users,
@@ -8,7 +9,6 @@ import {
 	Building2,
 	ChevronLeft,
 	ChevronRight,
-	Icon,
 	MessageCircleMore,
 } from "lucide-react";
 import WhatsAppButton from "./WhatsAppButton";
@@ -48,18 +48,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 						<img
 							src="https://res.cloudinary.com/ds7bybp6g/image/upload/v1750859567/creatordream_nlvcgd.png"
 							alt="logo"
+							className="w-full h-12 object-contain"
 						/>
-						{/* <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-							Creators Dream
-						</h1>
-						<p className="text-sm text-gray-600 mt-1">
-							Discover amazing creators
-						</p> */}
 					</div>
 				)}
 				<button
 					onClick={onToggleCollapse}
-					className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+					className="p-2 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
 				>
 					{isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
 				</button>

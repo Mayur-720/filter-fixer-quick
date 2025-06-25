@@ -13,6 +13,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
+	DialogDescription,
 } from "./ui/dialog";
 import {
 	Select,
@@ -77,7 +78,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 			filteredCreators = filteredCreators.filter(
 				(creator) =>
 					creator.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-					creator.details.tags.some((tag) =>
+					creator.details?.tags?.some((tag) =>
 						tag.toLowerCase().includes(searchTerm.toLowerCase())
 					) ||
 					creator.genre.toLowerCase().includes(searchTerm.toLowerCase())
@@ -91,20 +92,17 @@ const Dashboard: React.FC<DashboardProps> = ({
 			);
 		}
 
-		// Apply location filter (fixed - was missing)
+		// Apply location filter - fixed to handle string values properly
 		if (filters.location !== "All") {
 			filteredCreators = filteredCreators.filter((creator) => {
 				const creatorLocation = creator.location || creator.details?.location || "";
-				const selectedLocation = typeof filters.location === 'string' 
-					? filters.location 
-					: filters.location?.name || "";
-				return creatorLocation.toLowerCase().includes(selectedLocation.toLowerCase());
+				return creatorLocation.toLowerCase().includes(filters.location.toLowerCase());
 			});
 		}
 
 		// Filter by followers range (convert K to actual numbers)
 		filteredCreators = filteredCreators.filter((creator) => {
-			const followers = creator.details.analytics.followers / 1000; // Convert to K
+			const followers = creator.details?.analytics?.followers ? creator.details.analytics.followers / 1000 : 0;
 			return (
 				followers >= filters.followersRange[0] &&
 				followers <= filters.followersRange[1]
@@ -113,7 +111,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 
 		// Enhanced price filtering with better extraction
 		filteredCreators = filteredCreators.filter((creator) => {
-			const pricingText = creator.details.pricing.toLowerCase();
+			const pricingText = creator.details?.pricing?.toLowerCase() || "";
 			// Match various price formats: $100, $1,000, $1.5k, etc.
 			const priceMatches = pricingText.match(/\$(\d+(?:,\d{3})*(?:\.\d+)?)/g);
 			if (priceMatches) {
@@ -139,11 +137,9 @@ const Dashboard: React.FC<DashboardProps> = ({
 		return [...creators].sort((a, b) => {
 			switch (sortBy) {
 				case "followers":
-					return b.details.analytics.followers - a.details.analytics.followers;
+					return (b.details?.analytics?.followers || 0) - (a.details?.analytics?.followers || 0);
 				case "views":
-					return (
-						b.details.analytics.totalViews - a.details.analytics.totalViews
-					);
+					return (b.details?.analytics?.totalViews || 0) - (a.details?.analytics?.totalViews || 0);
 				case "price": {
 					const getPriceFromString = (pricing: string) => {
 						const match = pricing.match(/\$(\d+(?:,\d{3})*)/);
@@ -153,8 +149,8 @@ const Dashboard: React.FC<DashboardProps> = ({
 						return 0;
 					};
 					return (
-						getPriceFromString(a.details.pricing) -
-						getPriceFromString(b.details.pricing)
+						getPriceFromString(a.details?.pricing || "") -
+						getPriceFromString(b.details?.pricing || "")
 					);
 				}
 				case "name":
@@ -272,6 +268,9 @@ const Dashboard: React.FC<DashboardProps> = ({
 								<DialogContent className="sm:max-w-md max-h-[80vh] overflow-y-auto">
 									<DialogHeader>
 										<DialogTitle>Filter Creators</DialogTitle>
+										<DialogDescription>
+											Use the filters below to narrow down your search for creators.
+										</DialogDescription>
 									</DialogHeader>
 									<Filters
 										filters={filters}
