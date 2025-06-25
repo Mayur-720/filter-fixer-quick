@@ -1,20 +1,12 @@
+
 import React, { useState, useEffect } from "react";
 import CreatorCard from "./CreatorCard";
-import Filters from "./Filters";
 import WhatsAppButton from "./WhatsAppButton";
 import { Creator } from "../types/Creator";
 import { creatorAPI } from "../services/api";
-import { Users, Search, Filter, ArrowUpDown } from "lucide-react";
+import { Users, Search, ArrowUpDown } from "lucide-react";
 import { Input } from "./ui/input";
 import { Skeleton } from "./ui/skeleton";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-	DialogDescription,
-} from "./ui/dialog";
 import {
 	Select,
 	SelectContent,
@@ -37,14 +29,9 @@ const Dashboard: React.FC<DashboardProps> = ({
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [searchTerm, setSearchTerm] = useState("");
-	const [showFiltersDialog, setShowFiltersDialog] = useState(false);
 	const [sortBy, setSortBy] = useState("followers");
-	const [filters, setFilters] = useState({
-		platform: "All",
-		location: "All",
-		priceRange: [0, 5000] as [number, number],
-		followersRange: [0, 1000] as [number, number],
-	});
+	const [platformFilter, setPlatformFilter] = useState("All");
+	const [locationFilter, setLocationFilter] = useState("All");
 	const isMobile = useIsMobile();
 
 	// Fetch creators from API
@@ -66,7 +53,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 		fetchCreators();
 	}, []);
 
-	// Enhanced filtering logic
+	// Simple filtering logic
 	const getFilteredCreators = () => {
 		let filteredCreators =
 			activeGenre === "All Creators"
@@ -86,49 +73,19 @@ const Dashboard: React.FC<DashboardProps> = ({
 		}
 
 		// Apply platform filter
-		if (filters.platform !== "All") {
+		if (platformFilter !== "All") {
 			filteredCreators = filteredCreators.filter(
-				(creator) => creator.platform === filters.platform
+				(creator) => creator.platform === platformFilter
 			);
 		}
 
-		// Apply location filter - fixed to handle string values properly
-		if (filters.location !== "All") {
+		// Apply location filter
+		if (locationFilter !== "All") {
 			filteredCreators = filteredCreators.filter((creator) => {
 				const creatorLocation = creator.location || creator.details?.location || "";
-				return creatorLocation.toLowerCase().includes(filters.location.toLowerCase());
+				return creatorLocation === locationFilter;
 			});
 		}
-
-		// Filter by followers range (convert K to actual numbers)
-		filteredCreators = filteredCreators.filter((creator) => {
-			const followers = creator.details?.analytics?.followers ? creator.details.analytics.followers / 1000 : 0;
-			return (
-				followers >= filters.followersRange[0] &&
-				followers <= filters.followersRange[1]
-			);
-		});
-
-		// Enhanced price filtering with better extraction
-		filteredCreators = filteredCreators.filter((creator) => {
-			const pricingText = creator.details?.pricing?.toLowerCase() || "";
-			// Match various price formats: $100, $1,000, $1.5k, etc.
-			const priceMatches = pricingText.match(/\$(\d+(?:,\d{3})*(?:\.\d+)?)/g);
-			if (priceMatches) {
-				const prices = priceMatches.map(match => {
-					const numStr = match.replace(/[$,]/g, '');
-					let price = parseFloat(numStr);
-					// Handle 'k' suffix
-					if (pricingText.includes('k') && price < 100) {
-						price *= 1000;
-					}
-					return price;
-				});
-				const minPrice = Math.min(...prices);
-				return minPrice >= filters.priceRange[0] && minPrice <= filters.priceRange[1];
-			}
-			return true; // Include if no price found
-		});
 
 		return filteredCreators;
 	};
@@ -140,19 +97,6 @@ const Dashboard: React.FC<DashboardProps> = ({
 					return (b.details?.analytics?.followers || 0) - (a.details?.analytics?.followers || 0);
 				case "views":
 					return (b.details?.analytics?.totalViews || 0) - (a.details?.analytics?.totalViews || 0);
-				case "price": {
-					const getPriceFromString = (pricing: string) => {
-						const match = pricing.match(/\$(\d+(?:,\d{3})*)/);
-						if (match) {
-							return parseInt(match[1].replace(/,/g, ''));
-						}
-						return 0;
-					};
-					return (
-						getPriceFromString(a.details?.pricing || "") -
-						getPriceFromString(b.details?.pricing || "")
-					);
-				}
 				case "name":
 					return a.name.localeCompare(b.name);
 				default:
@@ -163,19 +107,16 @@ const Dashboard: React.FC<DashboardProps> = ({
 
 	const filteredCreators = sortCreators(getFilteredCreators(), sortBy);
 
-	const handleFiltersChange = (newFilters: typeof filters) => {
-		setFilters(newFilters);
+	const handleClearFilters = () => {
+		setPlatformFilter("All");
+		setLocationFilter("All");
+		setSearchTerm("");
+		setSortBy("followers");
 	};
 
-	const handleClearFilters = () => {
-		setFilters({
-			platform: "All",
-			priceRange: [0, 5000],
-			location: "All",
-			followersRange: [0, 1000],
-		});
-		setSearchTerm("");
-	};
+	// Get unique platforms and locations for filter options
+	const platforms = ["All", ...new Set(creators.map(c => c.platform))];
+	const locations = ["All", ...new Set(creators.map(c => c.location || c.details?.location).filter(Boolean))];
 
 	if (loading) {
 		return (
@@ -188,7 +129,8 @@ const Dashboard: React.FC<DashboardProps> = ({
 						</div>
 						<div className="flex items-center space-x-3">
 							<Skeleton className="h-10 flex-1" />
-							<Skeleton className="h-10 w-10" />
+							<Skeleton className="h-10 w-32" />
+							<Skeleton className="h-10 w-32" />
 						</div>
 					</div>
 				</header>
@@ -229,7 +171,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 
 	return (
 		<div className="flex-1 flex flex-col overflow-hidden bg-gray-50">
-			{/* Header - Made more responsive */}
+			{/* Header */}
 			<header className="bg-white shadow-sm border-b border-gray-200 p-3 sm:p-4 lg:p-6">
 				<div className="flex flex-col space-y-3 sm:space-y-4">
 					<div>
@@ -242,7 +184,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 						</p>
 					</div>
 
-					{/* Search, Filter and Sort - Enhanced responsive design */}
+					{/* Search and Filters */}
 					<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
 						<div className="relative flex-1 min-w-0">
 							<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -254,32 +196,36 @@ const Dashboard: React.FC<DashboardProps> = ({
 							/>
 						</div>
 
-						<div className="flex items-center gap-3">
-							<Dialog
-								open={showFiltersDialog}
-								onOpenChange={setShowFiltersDialog}
-							>
-								<DialogTrigger asChild>
-									<button className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors min-w-[80px] justify-center">
-										<Filter size={16} className="text-gray-600" />
-										{!isMobile && <span className="text-sm">Filter</span>}
-									</button>
-								</DialogTrigger>
-								<DialogContent className="sm:max-w-md max-h-[80vh] overflow-y-auto">
-									<DialogHeader>
-										<DialogTitle>Filter Creators</DialogTitle>
-										<DialogDescription>
-											Use the filters below to narrow down your search for creators.
-										</DialogDescription>
-									</DialogHeader>
-									<Filters
-										filters={filters}
-										onFiltersChange={handleFiltersChange}
-										onClearFilters={handleClearFilters}
-									/>
-								</DialogContent>
-							</Dialog>
+						<div className="flex items-center gap-2 flex-wrap">
+							{/* Platform Filter */}
+							<Select value={platformFilter} onValueChange={setPlatformFilter}>
+								<SelectTrigger className="w-[120px]">
+									<SelectValue placeholder="Platform" />
+								</SelectTrigger>
+								<SelectContent>
+									{platforms.map(platform => (
+										<SelectItem key={platform} value={platform}>
+											{platform}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
 
+							{/* Location Filter */}
+							<Select value={locationFilter} onValueChange={setLocationFilter}>
+								<SelectTrigger className="w-[120px]">
+									<SelectValue placeholder="Location" />
+								</SelectTrigger>
+								<SelectContent>
+									{locations.map(location => (
+										<SelectItem key={location} value={location}>
+											{location}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+
+							{/* Sort */}
 							<Select value={sortBy} onValueChange={setSortBy}>
 								<SelectTrigger className="w-[100px] sm:w-[140px]">
 									<ArrowUpDown size={16} className="mr-2 flex-shrink-0" />
@@ -288,10 +234,19 @@ const Dashboard: React.FC<DashboardProps> = ({
 								<SelectContent>
 									<SelectItem value="followers">Followers</SelectItem>
 									<SelectItem value="views">Views</SelectItem>
-									<SelectItem value="price">Price</SelectItem>
 									<SelectItem value="name">Name</SelectItem>
 								</SelectContent>
 							</Select>
+
+							{/* Clear Filters */}
+							{(platformFilter !== "All" || locationFilter !== "All" || searchTerm) && (
+								<button
+									onClick={handleClearFilters}
+									className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+								>
+									Clear
+								</button>
+							)}
 						</div>
 					</div>
 				</div>

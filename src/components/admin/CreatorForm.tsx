@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { CreateCreatorData } from "../../services/api";
 import { useCreators } from "../../hooks/useCreators";
@@ -30,15 +31,17 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 	const { createCreator, updateCreator } = useCreators();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [formData, setFormData] = useState<CreateCreatorData>({
+	const [formData, setFormData] = useState<CreateCreatorData & { location: string }>({
 		name: "",
 		genre: "",
 		avatar: "",
 		platform: "",
 		socialLink: "",
+		location: "",
 		bio: "",
 		followers: 0,
 		totalViews: 0,
+		engagement: "",
 		reels: [],
 		pricing: "",
 		tags: [],
@@ -54,12 +57,14 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 				avatar: creator.avatar || "",
 				platform: creator.platform || "",
 				socialLink: creator.socialLink || "",
-				bio: creator.details.bio || "",
-				followers: creator.details.analytics.followers || 0,
-				totalViews: creator.details.analytics.totalViews || 0,
-				reels: creator.details.reels || [],
-				pricing: creator.details.pricing || "",
-				tags: creator.details.tags || [],
+				location: creator.location || creator.details?.location || "",
+				bio: creator.details?.bio || "",
+				followers: creator.details?.analytics?.followers || 0,
+				totalViews: creator.details?.analytics?.totalViews || 0,
+				engagement: creator.details?.analytics?.engagement || "",
+				reels: creator.details?.reels || [],
+				pricing: creator.details?.pricing || "",
+				tags: creator.details?.tags || [],
 			});
 		}
 	}, [creator]);
@@ -122,9 +127,11 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 				avatar: formData.avatar,
 				platform: formData.platform,
 				socialLink: formData.socialLink,
+				location: formData.location || "Other",
 				bio: formData.bio,
 				followers: parseFloat(formData.followers.toString()) || 0,
 				totalViews: parseInt(formData.totalViews.toString()) || 0,
+				engagement: formData.engagement,
 				reels: formData.reels || [],
 				pricing: formData.pricing,
 				tags: formData.tags || [],
@@ -136,7 +143,6 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 				await createCreator(payload);
 			}
 			onSuccess();
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (error: any) {
 			console.error("Failed to save creator:", error);
 			setError(error.message || "Failed to save creator");
@@ -146,7 +152,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 	};
 
 	const handleInputChange = (
-		field: keyof CreateCreatorData,
+		field: keyof (CreateCreatorData & { location: string }),
 		value: unknown
 	) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
@@ -161,19 +167,23 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 	};
 
 	return (
-		<div className="p-6 max-w-3xl mx-auto">
+		<div className="p-6 max-w-4xl mx-auto">
 			<h2 className="text-2xl font-bold mb-6">
 				{creator ? "Edit Creator" : "Add New Creator"}
 			</h2>
 
-			{error && <p className="text-red-500 mb-4">{error}</p>}
+			{error && (
+				<div className="mb-4 p-4 bg-red-100 border border-red-300 text-red-700 rounded">
+					{error}
+				</div>
+			)}
 
 			<form onSubmit={handleSubmit} className="space-y-6">
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-					{/* Basic Information */}
+					{/* Left Column - Basic Information */}
 					<div className="space-y-4">
 						<div>
-							<Label htmlFor="name">Name</Label>
+							<Label htmlFor="name">Name *</Label>
 							<Input
 								id="name"
 								value={formData.name}
@@ -184,7 +194,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 						</div>
 
 						<div>
-							<Label htmlFor="genre">Genre</Label>
+							<Label htmlFor="genre">Genre *</Label>
 							<Select
 								value={formData.genre}
 								onValueChange={(value) => handleInputChange("genre", value)}
@@ -193,12 +203,8 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 									<SelectValue placeholder="Select a genre" />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value="Video Editing/AI">
-										Video Editing/AI
-									</SelectItem>
-									<SelectItem value="Tips & Tricks/AI">
-										Tips & Tricks/AI
-									</SelectItem>
+									<SelectItem value="Video Editing/AI">Video Editing/AI</SelectItem>
+									<SelectItem value="Tips & Tricks/AI">Tips & Tricks/AI</SelectItem>
 									<SelectItem value="Tech Products">Tech Products</SelectItem>
 									<SelectItem value="Lifestyle">Lifestyle</SelectItem>
 									<SelectItem value="Business">Business</SelectItem>
@@ -207,7 +213,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 						</div>
 
 						<div>
-							<Label>Avatar Image</Label>
+							<Label>Avatar Image *</Label>
 							<ImageUpload
 								currentImage={formData.avatar}
 								onImageUpload={handleImageUpload}
@@ -217,7 +223,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 						</div>
 
 						<div>
-							<Label htmlFor="platform">Platform</Label>
+							<Label htmlFor="platform">Platform *</Label>
 							<Select
 								value={formData.platform}
 								onValueChange={(value) => handleInputChange("platform", value)}
@@ -236,34 +242,54 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 						</div>
 
 						<div>
-							<Label htmlFor="socialLink">Social Profile URL</Label>
+							<Label htmlFor="socialLink">Social Profile URL *</Label>
 							<Input
 								id="socialLink"
 								value={formData.socialLink}
-								onChange={(e) =>
-									handleInputChange("socialLink", e.target.value)
-								}
+								onChange={(e) => handleInputChange("socialLink", e.target.value)}
 								placeholder="https://instagram.com/username"
 								type="url"
 								required
 							/>
 						</div>
+
+						<div>
+							<Label htmlFor="location">Location</Label>
+							<Select
+								value={formData.location}
+								onValueChange={(value) => handleInputChange("location", value)}
+							>
+								<SelectTrigger>
+									<SelectValue placeholder="Select location" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="USA">USA</SelectItem>
+									<SelectItem value="Canada">Canada</SelectItem>
+									<SelectItem value="UK">UK</SelectItem>
+									<SelectItem value="Australia">Australia</SelectItem>
+									<SelectItem value="Germany">Germany</SelectItem>
+									<SelectItem value="France">France</SelectItem>
+									<SelectItem value="India">India</SelectItem>
+									<SelectItem value="Japan">Japan</SelectItem>
+									<SelectItem value="Brazil">Brazil</SelectItem>
+									<SelectItem value="Spain">Spain</SelectItem>
+									<SelectItem value="Other">Other</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
 					</div>
 
-					{/* Analytics and Other Fields */}
+					{/* Right Column - Analytics and Other Fields */}
 					<div className="space-y-4">
 						<div>
-							<Label htmlFor="followers">Followers</Label>
+							<Label htmlFor="followers">Followers *</Label>
 							<Input
 								id="followers"
 								type="number"
 								step="0.1"
 								value={formData.followers}
 								onChange={(e) =>
-									handleInputChange(
-										"followers",
-										parseFloat(e.target.value) || 0
-									)
+									handleInputChange("followers", parseFloat(e.target.value) || 0)
 								}
 								placeholder="e.g., 1000.5"
 								min="0"
@@ -272,7 +298,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 						</div>
 
 						<div>
-							<Label htmlFor="totalViews">Total Views</Label>
+							<Label htmlFor="totalViews">Total Views *</Label>
 							<Input
 								id="totalViews"
 								type="number"
@@ -287,7 +313,17 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 						</div>
 
 						<div>
-							<Label htmlFor="pricing">Pricing</Label>
+							<Label htmlFor="engagement">Engagement Rate</Label>
+							<Input
+								id="engagement"
+								value={formData.engagement}
+								onChange={(e) => handleInputChange("engagement", e.target.value)}
+								placeholder="e.g., 3.2% or High"
+							/>
+						</div>
+
+						<div>
+							<Label htmlFor="pricing">Pricing *</Label>
 							<Input
 								id="pricing"
 								value={formData.pricing}
@@ -311,7 +347,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 
 				{/* Full width fields */}
 				<div>
-					<Label htmlFor="bio">Bio</Label>
+					<Label htmlFor="bio">Bio *</Label>
 					<Textarea
 						id="bio"
 						value={formData.bio}
@@ -319,6 +355,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 						rows={4}
 						placeholder="Creator biography..."
 						required
+						className="min-h-[100px]"
 					/>
 				</div>
 
@@ -330,6 +367,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 						onChange={(e) => handleArrayChange("reels", e.target.value)}
 						rows={3}
 						placeholder="https://example.com/reel1, https://example.com/reel2"
+						className="min-h-[80px]"
 					/>
 				</div>
 

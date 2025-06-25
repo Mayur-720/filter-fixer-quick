@@ -46,6 +46,7 @@ export interface CreateCreatorData {
 	avatar: string;
 	platform: string;
 	socialLink: string;
+	location?: string;
 	bio: string;
 	followers: number;
 	totalViews: number;
@@ -53,7 +54,6 @@ export interface CreateCreatorData {
 	reels: string[];
 	pricing: string;
 	tags: string[];
-	location?: string;
 }
 
 export type UpdateCreatorData = Partial<CreateCreatorData>;
@@ -81,6 +81,7 @@ export const creatorAPI = {
 			socialLink: data.socialLink,
 			location: data.location || "Other",
 			details: {
+				location: data.location || "Other",
 				bio: data.bio,
 				analytics: {
 					followers: data.followers,
@@ -98,7 +99,6 @@ export const creatorAPI = {
 
 	// Update creator
 	update: async (id: string, data: UpdateCreatorData): Promise<Creator> => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const updateData: any = {};
 
 		if (data.name) updateData.name = data.name;
@@ -119,6 +119,7 @@ export const creatorAPI = {
 		) {
 			updateData.details = {};
 			if (data.bio) updateData.details.bio = data.bio;
+			if (data.location) updateData.details.location = data.location;
 			if (data.followers || data.totalViews || data.engagement) {
 				updateData.details.analytics = {};
 				if (data.followers)
