@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import CreatorCard from "./CreatorCard";
@@ -188,7 +187,7 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 					{filteredCreators.map((creator) => (
 						<CreatorCard
-							key={creator.id}
+							key={creator._id || creator.name}
 							creator={creator}
 							onClick={() => onCreatorClick(creator)}
 						/>
