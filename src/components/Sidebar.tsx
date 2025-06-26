@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
 	Users,
@@ -48,7 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						<img
 							src="https://res.cloudinary.com/ds7bybp6g/image/upload/v1750859567/creatordream_nlvcgd.png"
 							alt="logo"
-							className="w-full h-12 object-contain"
+							className="w-full object-contain"
 						/>
 					</div>
 				)}

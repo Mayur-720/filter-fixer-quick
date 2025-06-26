@@ -1,7 +1,15 @@
-
 import React from "react";
 import { Creator } from "../types/Creator";
-import { Instagram, Linkedin, Twitter, Youtube, ExternalLink, MapPin, Users, Eye } from "lucide-react";
+import {
+	Instagram,
+	Linkedin,
+	Twitter,
+	Youtube,
+	ExternalLink,
+	MapPin,
+	Users,
+	Eye,
+} from "lucide-react";
 
 interface CreatorCardProps {
 	creator: Creator;
@@ -56,17 +64,21 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 							(e.target as HTMLImageElement).src = "/fallback-avatar.png";
 						}}
 					/>
-					
+
 					{/* Overlay with stats - appears on hover */}
 					<div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-4">
 						<div className="text-white space-y-1 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
 							<div className="flex items-center gap-2 text-sm">
 								<Users size={14} />
-								<span>{formatNumber(creator.details?.analytics.followers || 0)}</span>
+								<span>
+									{formatNumber(creator.details?.analytics.followers || 0)}
+								</span>
 							</div>
 							<div className="flex items-center gap-2 text-sm">
 								<Eye size={14} />
-								<span>{formatNumber(creator.details?.analytics.totalViews || 0)}</span>
+								<span>
+									{formatNumber(creator.details?.analytics.totalViews || 0)}
+								</span>
 							</div>
 						</div>
 					</div>
@@ -83,42 +95,31 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 						<h3 className="text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors duration-300 truncate">
 							{creator.name}
 						</h3>
-						
+
 						<div className="flex items-center gap-2 text-sm text-gray-500">
 							<MapPin size={12} />
-							<span className="truncate">Global</span>
-						</div>
-
-						<div className="flex flex-wrap gap-1">
-							{creator.details?.tags?.slice(0, 2).map((tag, index) => (
-								<span
-									key={index}
-									className="inline-block bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs font-medium"
-								>
-									{tag}
-								</span>
-							))}
-							{(creator.details?.tags?.length || 0) > 2 && (
-								<span className="text-xs text-gray-500 px-2 py-1">
-									+{(creator.details?.tags?.length || 0) - 2} more
-								</span>
-							)}
+							<span className="truncate">{creator.location}</span>
 						</div>
 					</div>
 
 					{/* Action Section */}
 					<div className="flex items-center justify-between pt-2 border-t border-gray-100">
 						<div className="text-sm">
-							<span className="text-gray-500">From </span>
-							<span className="font-semibold text-gray-900">{creator.details?.pricing || "Contact for pricing"}</span>
+							<span className="font-semibold text-gray-900">
+								₹{creator.details?.pricing || "Contact for pricing"}
+							</span>
 						</div>
-						
+
 						<a
-							href={creator.socialLink || "https://www.instagram.com/saarvendra/"}
+							href={
+								creator.socialLink || "https://www.instagram.com/saarvendra/"
+							}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md"
-							aria-label={`Visit ${creator.name}'s ${creator.platform || "Instagram"} profile`}
+							className="flex items-center gap-2 border-2 hover:from-purple-600 hover:to-pink-600  px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md"
+							aria-label={`Visit ${creator.name}'s ${
+								creator.platform || "Instagram"
+							} profile`}
 							onClick={(e) => e.stopPropagation()}
 						>
 							{renderPlatformIcon(12)}

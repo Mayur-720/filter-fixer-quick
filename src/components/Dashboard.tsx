@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import CreatorCard from "./CreatorCard";
 import WhatsAppButton from "./WhatsAppButton";
@@ -88,7 +87,8 @@ const Dashboard: React.FC<DashboardProps> = ({
 		// Apply location filter
 		if (filters.location !== "All") {
 			filteredCreators = filteredCreators.filter((creator) => {
-				const creatorLocation = creator.location || creator.details?.location || "";
+				const creatorLocation =
+					creator.location || creator.details?.location || "";
 				return creatorLocation === filters.location;
 			});
 		}
@@ -105,7 +105,10 @@ const Dashboard: React.FC<DashboardProps> = ({
 		filteredCreators = filteredCreators.filter((creator) => {
 			const followers = creator.details?.analytics?.followers || 0;
 			const followersInK = followers / 1000;
-			return followersInK >= filters.followersRange[0] && followersInK <= filters.followersRange[1];
+			return (
+				followersInK >= filters.followersRange[0] &&
+				followersInK <= filters.followersRange[1]
+			);
 		});
 
 		return filteredCreators;
@@ -123,7 +126,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 		setSearchTerm("");
 	};
 
-	const hasActiveFilters = 
+	const hasActiveFilters =
 		filters.platform !== "All" ||
 		filters.location !== "All" ||
 		filters.priceRange[0] !== 0 ||
@@ -241,7 +244,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 
 			{/* Content */}
 			<div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6">
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 lg:gap-6">
+				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-4 lg:gap-6">
 					{filteredCreators.map((creator) => (
 						<CreatorCard
 							key={creator._id}

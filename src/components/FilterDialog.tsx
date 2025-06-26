@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
 	Dialog,
@@ -138,10 +137,28 @@ const majorIndianCities = [
 	"Gaya",
 	"Jalgaon",
 	"Udaipur",
-	"Maheshtala"
+	"Maheshtala",
+	"USA",
+	"Canada",
+	"UK",
+	"Australia",
+	"Germany",
+	"France",
+	"Japan",
+	"South Korea",
+	"Singapore",
+	"New Zealand",
+	"Spain",
 ];
 
-const platforms = ["All", "Instagram", "YouTube", "TikTok", "Twitter", "LinkedIn"];
+const platforms = [
+	"All",
+	"Instagram",
+	"YouTube",
+	"TikTok",
+	"Twitter",
+	"LinkedIn",
+];
 
 const FilterDialog: React.FC<FilterDialogProps> = ({
 	isOpen,
@@ -157,7 +174,7 @@ const FilterDialog: React.FC<FilterDialogProps> = ({
 		});
 	};
 
-	const hasActiveFilters = 
+	const hasActiveFilters =
 		filters.platform !== "All" ||
 		filters.location !== "All" ||
 		filters.priceRange[0] !== 0 ||
@@ -188,7 +205,8 @@ const FilterDialog: React.FC<FilterDialogProps> = ({
 						Filter Creators
 					</DialogTitle>
 					<DialogDescription>
-						Filter creators by platform, location, price range, and follower count
+						Filter creators by platform, location, price range, and follower
+						count
 					</DialogDescription>
 				</DialogHeader>
 
@@ -248,16 +266,22 @@ const FilterDialog: React.FC<FilterDialogProps> = ({
 						<div className="px-3">
 							<Slider
 								value={filters.priceRange}
-								onValueChange={(value) => handleFilterChange("priceRange", value as [number, number])}
+								onValueChange={(value) =>
+									handleFilterChange("priceRange", value as [number, number])
+								}
 								max={10000}
 								min={0}
 								step={500}
 								className="w-full"
 							/>
 							<div className="flex justify-between items-center mt-2 text-sm text-gray-600">
-								<span className="font-medium">{formatPrice(filters.priceRange[0])}</span>
+								<span className="font-medium">
+									{formatPrice(filters.priceRange[0])}
+								</span>
 								<span className="text-gray-400">to</span>
-								<span className="font-medium">{formatPrice(filters.priceRange[1])}</span>
+								<span className="font-medium">
+									{formatPrice(filters.priceRange[1])}
+								</span>
 							</div>
 						</div>
 					</div>
@@ -271,16 +295,25 @@ const FilterDialog: React.FC<FilterDialogProps> = ({
 						<div className="px-3">
 							<Slider
 								value={filters.followersRange}
-								onValueChange={(value) => handleFilterChange("followersRange", value as [number, number])}
+								onValueChange={(value) =>
+									handleFilterChange(
+										"followersRange",
+										value as [number, number]
+									)
+								}
 								max={1000}
 								min={0}
 								step={50}
 								className="w-full"
 							/>
 							<div className="flex justify-between items-center mt-2 text-sm text-gray-600">
-								<span className="font-medium">{formatFollowers(filters.followersRange[0])}</span>
+								<span className="font-medium">
+									{formatFollowers(filters.followersRange[0])}
+								</span>
 								<span className="text-gray-400">to</span>
-								<span className="font-medium">{formatFollowers(filters.followersRange[1])}</span>
+								<span className="font-medium">
+									{formatFollowers(filters.followersRange[1])}
+								</span>
 							</div>
 						</div>
 					</div>
@@ -288,7 +321,9 @@ const FilterDialog: React.FC<FilterDialogProps> = ({
 					{/* Active Filters Summary */}
 					{hasActiveFilters && (
 						<div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-							<h4 className="font-medium text-purple-800 mb-2 text-sm">Active Filters:</h4>
+							<h4 className="font-medium text-purple-800 mb-2 text-sm">
+								Active Filters:
+							</h4>
 							<div className="flex flex-wrap gap-2">
 								{filters.platform !== "All" && (
 									<span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs">
@@ -300,14 +335,18 @@ const FilterDialog: React.FC<FilterDialogProps> = ({
 										{filters.location}
 									</span>
 								)}
-								{(filters.priceRange[0] !== 0 || filters.priceRange[1] !== 10000) && (
+								{(filters.priceRange[0] !== 0 ||
+									filters.priceRange[1] !== 10000) && (
 									<span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs">
-										{formatPrice(filters.priceRange[0])} - {formatPrice(filters.priceRange[1])}
+										{formatPrice(filters.priceRange[0])} -{" "}
+										{formatPrice(filters.priceRange[1])}
 									</span>
 								)}
-								{(filters.followersRange[0] !== 0 || filters.followersRange[1] !== 1000) && (
+								{(filters.followersRange[0] !== 0 ||
+									filters.followersRange[1] !== 1000) && (
 									<span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs">
-										{formatFollowers(filters.followersRange[0])} - {formatFollowers(filters.followersRange[1])} followers
+										{formatFollowers(filters.followersRange[0])} -{" "}
+										{formatFollowers(filters.followersRange[1])} followers
 									</span>
 								)}
 							</div>
