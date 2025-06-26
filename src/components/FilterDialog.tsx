@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useMemo } from "react";
 import {
 	Dialog,
 	DialogContent,
@@ -18,11 +18,12 @@ import {
 	SelectValue,
 } from "./ui/select";
 import { Slider } from "./ui/slider";
-import { X, MapPin, DollarSign, Users, Monitor } from "lucide-react";
+import { X, MapPin, DollarSign, Users, Monitor, Search, Check } from "lucide-react";
+import { Checkbox } from "./ui/checkbox";
 
 interface FilterState {
 	platform: string;
-	location: string;
+	locations: string[];
 	priceRange: [number, number];
 	followersRange: [number, number];
 }
@@ -36,110 +37,107 @@ interface FilterDialogProps {
 }
 
 const majorIndianCities = [
-	"All",
-	"Mumbai",
-	"Delhi",
-	"Bangalore",
-	"Chennai",
-	"Kolkata",
-	"Hyderabad",
-	"Pune",
-	"Ahmedabad",
-	"Jaipur",
-	"Lucknow",
-	"Kanpur",
-	"Nagpur",
-	"Indore",
-	"Thane",
-	"Bhopal",
-	"Visakhapatnam",
-	"Pimpri-Chinchwad",
-	"Patna",
-	"Vadodara",
-	"Ghaziabad",
-	"Ludhiana",
 	"Agra",
-	"Nashik",
-	"Faridabad",
-	"Meerut",
-	"Rajkot",
-	"Kalyan-Dombivli",
-	"Vasai-Virar",
-	"Varanasi",
-	"Srinagar",
-	"Aurangabad",
-	"Dhanbad",
-	"Amritsar",
-	"Navi Mumbai",
-	"Allahabad",
-	"Ranchi",
-	"Howrah",
-	"Coimbatore",
-	"Jabalpur",
-	"Gwalior",
-	"Vijayawada",
-	"Jodhpur",
-	"Madurai",
-	"Raipur",
-	"Kota",
-	"Guwahati",
-	"Chandigarh",
-	"Solapur",
-	"Hubli-Dharwad",
-	"Bareilly",
-	"Moradabad",
-	"Mysore",
-	"Gurgaon",
-	"Aligarh",
-	"Jalandhar",
-	"Tiruchirappalli",
-	"Bhubaneswar",
-	"Salem",
-	"Mira-Bhayandar",
-	"Warangal",
-	"Thiruvananthapuram",
-	"Guntur",
-	"Bhiwandi",
-	"Saharanpur",
-	"Gorakhpur",
-	"Bikaner",
-	"Amravati",
-	"Noida",
-	"Jamshedpur",
-	"Bhilai Nagar",
-	"Cuttack",
-	"Firozabad",
-	"Kochi",
-	"Nellore",
-	"Bhavnagar",
-	"Dehradun",
-	"Durgapur",
-	"Asansol",
-	"Rourkela",
-	"Nanded",
-	"Kolhapur",
+	"Ahmedabad",
 	"Ajmer",
 	"Akola",
-	"Gulbarga",
-	"Jamnagar",
-	"Ujjain",
-	"Loni",
-	"Siliguri",
-	"Jhansi",
-	"Ulhasnagar",
-	"Jammu",
-	"Sangli-Miraj & Kupwad",
-	"Mangalore",
-	"Erode",
+	"Aligarh",
+	"Allahabad",
+	"Amravati",
+	"Amritsar",
+	"Asansol",
+	"Aurangabad",
+	"Bangalore",
+	"Bareilly",
 	"Belgaum",
-	"Ambattur",
-	"Tirunelveli",
-	"Malegaon",
+	"Bhavnagar",
+	"Bhilai Nagar",
+	"Bhiwandi",
+	"Bhopal",
+	"Bhubaneswar",
+	"Bikaner",
+	"Chennai",
+	"Chandigarh",
+	"Coimbatore",
+	"Cuttack",
+	"Dehradun",
+	"Delhi",
+	"Dhanbad",
+	"Durgapur",
+	"Erode",
+	"Faridabad",
+	"Firozabad",
 	"Gaya",
+	"Ghaziabad",
+	"Gorakhpur",
+	"Gulbarga",
+	"Guntur",
+	"Gurgaon",
+	"Guwahati",
+	"Gwalior",
+	"Howrah",
+	"Hubli-Dharwad",
+	"Hyderabad",
+	"Indore",
+	"Jabalpur",
+	"Jaipur",
 	"Jalgaon",
+	"Jalandhar",
+	"Jammu",
+	"Jamnagar",
+	"Jamshedpur",
+	"Jhansi",
+	"Jodhpur",
+	"Kalyan-Dombivli",
+	"Kanpur",
+	"Kochi",
+	"Kolhapur",
+	"Kolkata",
+	"Kota",
+	"Lucknow",
+	"Ludhiana",
+	"Madurai",
+	"Maheshtala",
+	"Malegaon",
+	"Mangalore",
+	"Meerut",
+	"Mira-Bhayandar",
+	"Moradabad",
+	"Mumbai",
+	"Mysore",
+	"Nagpur",
+	"Nanded",
+	"Nashik",
+	"Navi Mumbai",
+	"Nellore",
+	"Noida",
+	"Patna",
+	"Pimpri-Chinchwad",
+	"Pune",
+	"Raipur",
+	"Rajkot",
+	"Ranchi",
+	"Rourkela",
+	"Saharanpur",
+	"Salem",
+	"Sangli-Miraj & Kupwad",
+	"Siliguri",
+	"Solapur",
+	"Srinagar",
+	"Thane",
+	"Thiruvananthapuram",
+	"Tiruchirappalli",
+	"Tirunelveli",
 	"Udaipur",
-	"Maheshtala"
-];
+	"Ujjain",
+	"Ulhasnagar",
+	"Vadodara",
+	"Varanasi",
+	"Vasai-Virar",
+	"Vijayawada",
+	"Visakhapatnam",
+	"Warangal"
+].sort();
 
 const platforms = ["All", "Instagram", "YouTube", "TikTok", "Twitter", "LinkedIn"];
 
@@ -150,6 +148,15 @@ const FilterDialog: React.FC<FilterDialogProps> = ({
 	onFiltersChange,
 	onClearFilters,
 }) => {
+	const [locationSearch, setLocationSearch] = useState("");
+
+	const filteredCities = useMemo(() => {
+		if (!locationSearch.trim()) return majorIndianCities;
+		return majorIndianCities.filter(city =>
+			city.toLowerCase().includes(locationSearch.toLowerCase())
+		);
+	}, [locationSearch]);
+
 	const handleFilterChange = (key: keyof FilterState, value: any) => {
 		onFiltersChange({
 			...filters,
@@ -157,9 +164,17 @@ const FilterDialog: React.FC<FilterDialogProps> = ({
 		});
 	};
 
+	const handleLocationToggle = (location: string) => {
+		const newLocations = filters.locations.includes(location)
+			? filters.locations.filter(loc => loc !== location)
+			: [...filters.locations, location];
+		
+		handleFilterChange("locations", newLocations);
+	};
+
 	const hasActiveFilters = 
 		filters.platform !== "All" ||
-		filters.location !== "All" ||
+		filters.locations.length > 0 ||
 		filters.priceRange[0] !== 0 ||
 		filters.priceRange[1] !== 10000 ||
 		filters.followersRange[0] !== 0 ||
@@ -217,26 +232,69 @@ const FilterDialog: React.FC<FilterDialogProps> = ({
 					</div>
 
 					{/* Location Filter */}
-					<div className="space-y-2">
+					<div className="space-y-3">
 						<Label className="flex items-center gap-2 text-sm font-medium">
 							<MapPin className="h-4 w-4 text-green-500" />
-							Location (Major Indian Cities)
+							Locations (Major Indian Cities)
 						</Label>
-						<Select
-							value={filters.location}
-							onValueChange={(value) => handleFilterChange("location", value)}
-						>
-							<SelectTrigger>
-								<SelectValue placeholder="Select location" />
-							</SelectTrigger>
-							<SelectContent className="max-h-60">
-								{majorIndianCities.map((city) => (
-									<SelectItem key={city} value={city}>
-										{city}
-									</SelectItem>
+						
+						{/* Search Input */}
+						<div className="relative">
+							<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+							<Input
+								placeholder="Search cities..."
+								value={locationSearch}
+								onChange={(e) => setLocationSearch(e.target.value)}
+								className="pl-10"
+							/>
+						</div>
+
+						{/* Selected Locations Display */}
+						{filters.locations.length > 0 && (
+							<div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg">
+								{filters.locations.map((location) => (
+									<span
+										key={location}
+										className="inline-flex items-center gap-1 bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs"
+									>
+										{location}
+										<button
+											onClick={() => handleLocationToggle(location)}
+											className="hover:bg-purple-200 rounded-full p-0.5"
+										>
+											<X className="h-3 w-3" />
+										</button>
+									</span>
 								))}
-							</SelectContent>
-						</Select>
+							</div>
+						)}
+
+						{/* Cities List */}
+						<div className="max-h-48 overflow-y-auto border rounded-lg">
+							{filteredCities.map((city) => (
+								<div
+									key={city}
+									className="flex items-center space-x-3 p-3 hover:bg-gray-50 border-b last:border-b-0"
+								>
+									<Checkbox
+										id={city}
+										checked={filters.locations.includes(city)}
+										onCheckedChange={() => handleLocationToggle(city)}
+									/>
+									<label
+										htmlFor={city}
+										className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex-1"
+									>
+										{city}
+									</label>
+								</div>
+							))}
+							{filteredCities.length === 0 && (
+								<div className="p-4 text-center text-gray-500 text-sm">
+									No cities found matching your search
+								</div>
+							)}
+						</div>
 					</div>
 
 					{/* Price Range Filter */}
@@ -295,11 +353,11 @@ const FilterDialog: React.FC<FilterDialogProps> = ({
 										{filters.platform}
 									</span>
 								)}
-								{filters.location !== "All" && (
-									<span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs">
-										{filters.location}
+								{filters.locations.map((location) => (
+									<span key={location} className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs">
+										{location}
 									</span>
-								)}
+								))}
 								{(filters.priceRange[0] !== 0 || filters.priceRange[1] !== 10000) && (
 									<span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs">
 										{formatPrice(filters.priceRange[0])} - {formatPrice(filters.priceRange[1])}
