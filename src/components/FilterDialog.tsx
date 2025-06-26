@@ -138,7 +138,7 @@ const platforms = [
 	"YouTube",
 	"TikTok",
 	"Twitter",
-	"LinkedIn",
+	"LinkedIn"
 ];
 
 const FilterDialog: React.FC<FilterDialogProps> = ({
@@ -375,7 +375,7 @@ const FilterDialog: React.FC<FilterDialogProps> = ({
 									<span key={location} className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs">
 										{location}
 									</span>
-								)}
+								))}
 								{(filters.priceRange[0] !== 0 || filters.priceRange[1] !== 10000) && (
 									<span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs">
 										{formatPrice(filters.priceRange[0])} -{" "}
