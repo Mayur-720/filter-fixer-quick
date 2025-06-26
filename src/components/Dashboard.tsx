@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import CreatorCard from "./CreatorCard";
@@ -70,33 +71,32 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 				}
 			}
 
-		// Apply location filter
-		if (filters.location !== "All") {
-			filteredCreators = filteredCreators.filter((creator) => {
+			// Location filter
+			if (filters.locations.length > 0) {
 				const creatorLocation = creator.location || creator.details?.location || "";
-				return creatorLocation === filters.location;
-			});
-		}
+				if (!filters.locations.includes(creatorLocation)) {
+					return false;
+				}
+			}
 
-		// Apply price range filter
-		filteredCreators = filteredCreators.filter((creator) => {
+			// Price range filter
 			const pricing = creator.details?.pricing || "₹0";
 			const priceMatch = pricing.match(/₹(\d+)/);
 			const price = priceMatch ? parseInt(priceMatch[1]) : 0;
-			return price >= filters.priceRange[0] && price <= filters.priceRange[1];
-		});
+			if (price < filters.priceRange[0] || price > filters.priceRange[1]) {
+				return false;
+			}
 
-		// Apply followers range filter
-		filteredCreators = filteredCreators.filter((creator) => {
+			// Followers range filter
 			const followers = creator.details?.analytics?.followers || 0;
 			const followersInK = followers / 1000;
-			return followersInK >= filters.followersRange[0] && followersInK <= filters.followersRange[1];
+			if (followersInK < filters.followersRange[0] || followersInK > filters.followersRange[1]) {
+				return false;
+			}
+
+			return true;
 		});
-
-		return filteredCreators;
-	};
-
-	let filteredCreators = getFilteredCreators();
+	}, [allCreators, activeGenre, searchTerm, filters]);
 
 	const handleClearFilters = () => {
 		setFilters({
@@ -183,47 +183,48 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 					</p>
 				</div>
 
-			{/* Content */}
-			<div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6">
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 lg:gap-6">
-					{filteredCreators.map((creator) => (
-						<CreatorCard
-							key={creator._id || creator.name}
-							creator={creator}
-							onClick={() => onCreatorClick(creator)}
-						/>
-					))}
+				{/* Content */}
+				<div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6">
+					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 lg:gap-6">
+						{filteredCreators.map((creator) => (
+							<CreatorCard
+								key={creator._id || creator.name}
+								creator={creator}
+								onClick={() => onCreatorClick(creator)}
+							/>
+						))}
+					</div>
+
+					{/* No results */}
+					{filteredCreators.length === 0 && (
+						<div className="text-center py-12">
+							<div className="text-gray-400 mb-4">
+								<Search className="h-12 w-12 mx-auto" />
+							</div>
+							<h3 className="text-lg font-medium text-gray-900 mb-2">No creators found</h3>
+							<p className="text-gray-600 mb-4">
+								Try adjusting your search terms or filters to find more creators.
+							</p>
+							{hasActiveFilters && (
+								<button
+									onClick={handleClearFilters}
+									className="text-purple-600 hover:text-purple-700 font-medium"
+								>
+									Clear all filters
+								</button>
+							)}
+						</div>
+					)}
 				</div>
 
-				{/* No results */}
-				{filteredCreators.length === 0 && (
-					<div className="text-center py-12">
-						<div className="text-gray-400 mb-4">
-							<Search className="h-12 w-12 mx-auto" />
-						</div>
-						<h3 className="text-lg font-medium text-gray-900 mb-2">No creators found</h3>
-						<p className="text-gray-600 mb-4">
-							Try adjusting your search terms or filters to find more creators.
-						</p>
-						{hasActiveFilters && (
-							<button
-								onClick={handleClearFilters}
-								className="text-purple-600 hover:text-purple-700 font-medium"
-							>
-								Clear all filters
-							</button>
-						)}
-					</div>
-				)}
+				<FilterDialog
+					isOpen={isFilterOpen}
+					onClose={() => setIsFilterOpen(false)}
+					filters={filters}
+					onFiltersChange={setFilters}
+					onClearFilters={handleClearFilters}
+				/>
 			</div>
-
-			<FilterDialog
-				isOpen={isFilterOpen}
-				onClose={() => setIsFilterOpen(false)}
-				filters={filters}
-				onFiltersChange={setFilters}
-				onClearFilters={handleClearFilters}
-			/>
 		</div>
 	);
 };
