@@ -130,10 +130,10 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 
 	return (
 		<div className="flex-1 overflow-auto">
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+			<div className="max-w-full mx-auto px-3 sm:px-4 lg:px-6 py-3">
 				{/* Header */}
-				<div className="mb-4">
-					<h1 className="text-2xl font-bold text-gray-900 mb-1">
+				<div className="mb-3">
+					<h1 className="text-xl font-bold text-gray-900 mb-1">
 						{activeGenre}
 					</h1>
 					<p className="text-gray-600 text-sm">
@@ -142,14 +142,14 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 				</div>
 
 				{/* Search and Filter Bar */}
-				<div className="mb-4 flex flex-col sm:flex-row gap-3">
+				<div className="mb-3 flex flex-col sm:flex-row gap-2">
 					<div className="relative flex-1">
 						<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
 						<Input
 							placeholder="Search creators by name or tags..."
 							value={searchTerm}
 							onChange={(e) => setSearchTerm(e.target.value)}
-							className="pl-9 pr-4 py-2 w-full h-9"
+							className="pl-9 pr-4 py-2 w-full h-8"
 						/>
 					</div>
 					<button
@@ -176,7 +176,7 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 				</div>
 
 				{/* Results count */}
-				<div className="mb-3">
+				<div className="mb-2">
 					<p className="text-xs text-gray-600">
 						{filteredCreators.length} creator{filteredCreators.length !== 1 ? "s" : ""} found
 						{searchTerm && ` for "${searchTerm}"`}
@@ -185,7 +185,7 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 
 				{/* Content */}
 				<div className="flex-1 overflow-y-auto">
-					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-3 lg:gap-4">
+					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
 						{filteredCreators.map((creator) => (
 							<CreatorCard
 								key={creator._id || creator.name}
