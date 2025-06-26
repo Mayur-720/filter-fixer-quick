@@ -130,31 +130,31 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 
 	return (
 		<div className="flex-1 overflow-auto">
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
 				{/* Header */}
-				<div className="mb-8">
-					<h1 className="text-3xl font-bold text-gray-900 mb-2">
+				<div className="mb-4">
+					<h1 className="text-2xl font-bold text-gray-900 mb-1">
 						{activeGenre}
 					</h1>
-					<p className="text-gray-600">
+					<p className="text-gray-600 text-sm">
 						Discover amazing content creators and collaborate with them
 					</p>
 				</div>
 
 				{/* Search and Filter Bar */}
-				<div className="mb-8 flex flex-col sm:flex-row gap-4">
+				<div className="mb-4 flex flex-col sm:flex-row gap-3">
 					<div className="relative flex-1">
-						<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+						<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
 						<Input
 							placeholder="Search creators by name or tags..."
 							value={searchTerm}
 							onChange={(e) => setSearchTerm(e.target.value)}
-							className="pl-10 pr-4 py-2 w-full"
+							className="pl-9 pr-4 py-2 w-full h-9"
 						/>
 					</div>
 					<button
 						onClick={() => setIsFilterOpen(true)}
-						className={`flex items-center gap-2 px-4 py-2 rounded-md border transition-colors ${
+						className={`flex items-center gap-2 px-3 py-2 rounded-md border transition-colors text-sm ${
 							hasActiveFilters
 								? "bg-purple-100 border-purple-300 text-purple-700"
 								: "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -163,7 +163,7 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 						<Filter className="h-4 w-4" />
 						<span>Filters</span>
 						{hasActiveFilters && (
-							<span className="bg-purple-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+							<span className="bg-purple-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
 								{[
 									filters.platform !== "All" ? 1 : 0,
 									filters.locations.length,
@@ -176,16 +176,16 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 				</div>
 
 				{/* Results count */}
-				<div className="mb-6">
-					<p className="text-sm text-gray-600">
+				<div className="mb-3">
+					<p className="text-xs text-gray-600">
 						{filteredCreators.length} creator{filteredCreators.length !== 1 ? "s" : ""} found
 						{searchTerm && ` for "${searchTerm}"`}
 					</p>
 				</div>
 
 				{/* Content */}
-				<div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6">
-					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 lg:gap-6">
+				<div className="flex-1 overflow-y-auto">
+					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-3 lg:gap-4">
 						{filteredCreators.map((creator) => (
 							<CreatorCard
 								key={creator._id || creator.name}
@@ -197,18 +197,18 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 
 					{/* No results */}
 					{filteredCreators.length === 0 && (
-						<div className="text-center py-12">
-							<div className="text-gray-400 mb-4">
-								<Search className="h-12 w-12 mx-auto" />
+						<div className="text-center py-8">
+							<div className="text-gray-400 mb-3">
+								<Search className="h-10 w-10 mx-auto" />
 							</div>
 							<h3 className="text-lg font-medium text-gray-900 mb-2">No creators found</h3>
-							<p className="text-gray-600 mb-4">
+							<p className="text-gray-600 mb-4 text-sm">
 								Try adjusting your search terms or filters to find more creators.
 							</p>
 							{hasActiveFilters && (
 								<button
 									onClick={handleClearFilters}
-									className="text-purple-600 hover:text-purple-700 font-medium"
+									className="text-purple-600 hover:text-purple-700 font-medium text-sm"
 								>
 									Clear all filters
 								</button>
