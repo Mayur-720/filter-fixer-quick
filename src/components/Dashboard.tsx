@@ -96,7 +96,7 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 		return filteredCreators;
 	};
 
-	const filteredCreators = getFilteredCreators();
+	let filteredCreators = getFilteredCreators();
 
 	const handleClearFilters = () => {
 		setFilters({
