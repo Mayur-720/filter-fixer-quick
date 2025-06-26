@@ -3,7 +3,7 @@ import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import CreatorCard from "./CreatorCard";
 import { Creator } from "../types/Creator";
-import { fetchCreators } from "../services/api";
+import { creatorAPI } from "../services/api";
 import { mockCreators } from "../data/mockData";
 import { Loader2, Search, Filter } from "lucide-react";
 import { Input } from "./ui/input";
@@ -33,7 +33,7 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 
 	const { data: creators = [], isLoading, error } = useQuery({
 		queryKey: ["creators"],
-		queryFn: fetchCreators,
+		queryFn: () => creatorAPI.getAll(),
 		meta: {
 			onError: (error: any) => {
 				console.error("Failed to fetch creators:", error);
@@ -41,7 +41,7 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 		},
 	});
 
-	const allCreators = creators.length > 0 ? creators : mockCreators;
+	const allCreators: Creator[] = Array.isArray(creators) && creators.length > 0 ? creators : mockCreators;
 
 	const filteredCreators = useMemo(() => {
 		return allCreators.filter((creator) => {
