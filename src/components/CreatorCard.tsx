@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Creator } from "../types/Creator";
 import {
@@ -103,13 +104,7 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 					</div>
 
 					{/* Action Section */}
-					<div className="flex items-center justify-between pt-2 border-t border-gray-100">
-						<div className="text-sm">
-							<span className="font-semibold text-gray-900">
-								₹{creator.details?.pricing || "Contact for pricing"}
-							</span>
-						</div>
-
+					<div className="flex items-center justify-end pt-2 border-t border-gray-100">
 						<a
 							href={
 								creator.socialLink || "https://www.instagram.com/saarvendra/"

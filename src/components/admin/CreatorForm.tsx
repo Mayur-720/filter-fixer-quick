@@ -43,7 +43,6 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 		totalViews: 0,
 		engagement: "",
 		reels: [],
-		pricing: "",
 		tags: [],
 	});
 	const [currentPublicId, setCurrentPublicId] = useState<string | null>(null);
@@ -63,7 +62,6 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 				totalViews: creator.details?.analytics?.totalViews || 0,
 				engagement: creator.details?.analytics?.engagement || "",
 				reels: creator.details?.reels || [],
-				pricing: creator.details?.pricing || "",
 				tags: creator.details?.tags || [],
 			});
 		}
@@ -98,7 +96,6 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 		if (!formData.platform) missingFields.push("platform");
 		if (!formData.socialLink) missingFields.push("socialLink");
 		if (!formData.bio) missingFields.push("bio");
-		if (!formData.pricing) missingFields.push("pricing");
 		if (formData.followers === undefined || formData.followers < 0)
 			missingFields.push("followers");
 		if (formData.totalViews === undefined || formData.totalViews < 0)
@@ -133,7 +130,6 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 				totalViews: parseInt(formData.totalViews.toString()) || 0,
 				engagement: formData.engagement,
 				reels: formData.reels || [],
-				pricing: formData.pricing,
 				tags: formData.tags || [],
 			};
 
@@ -203,9 +199,9 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 									<SelectValue placeholder="Select a genre" />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value="Video Editing/AI">Video Editing/AI</SelectItem>
-									<SelectItem value="Tips & Tricks/AI">Tips & Tricks/AI</SelectItem>
-									<SelectItem value="Tech Products">Tech Products</SelectItem>
+									<SelectItem value="AI Creators">AI Creators</SelectItem>
+									<SelectItem value="Video Editing">Video Editing</SelectItem>
+									<SelectItem value="Tech Product">Tech Product</SelectItem>
 									<SelectItem value="Lifestyle">Lifestyle</SelectItem>
 									<SelectItem value="Business">Business</SelectItem>
 								</SelectContent>
@@ -319,17 +315,6 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 								value={formData.engagement}
 								onChange={(e) => handleInputChange("engagement", e.target.value)}
 								placeholder="e.g., 3.2% or High"
-							/>
-						</div>
-
-						<div>
-							<Label htmlFor="pricing">Pricing *</Label>
-							<Input
-								id="pricing"
-								value={formData.pricing}
-								onChange={(e) => handleInputChange("pricing", e.target.value)}
-								placeholder="e.g., $500-1000/post"
-								required
 							/>
 						</div>
 
