@@ -49,7 +49,7 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 			if (activeGenre !== "All Creators") {
 				const creatorTags = creator.details?.tags || [];
 				const genreMatch = creatorTags.some((tag) =>
-					tag.toLowerCase().includes(activeGenre.toLowerCase().replace(/\/ai/g, ""))
+					tag.toLowerCase().includes(activeGenre.toLowerCase())
 				);
 				if (!genreMatch) return false;
 			}
@@ -79,14 +79,6 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 				}
 			}
 
-			// Price range filter
-			const pricing = creator.details?.pricing || "₹0";
-			const priceMatch = pricing.match(/₹(\d+)/);
-			const price = priceMatch ? parseInt(priceMatch[1]) : 0;
-			if (price < filters.priceRange[0] || price > filters.priceRange[1]) {
-				return false;
-			}
-
 			// Followers range filter
 			const followers = creator.details?.analytics?.followers || 0;
 			const followersInK = followers / 1000;
@@ -110,8 +102,6 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 	const hasActiveFilters =
 		filters.platform !== "All" ||
 		filters.locations.length > 0 ||
-		filters.priceRange[0] !== 0 ||
-		filters.priceRange[1] !== 10000 ||
 		filters.followersRange[0] !== 0 ||
 		filters.followersRange[1] !== 1000;
 
@@ -167,7 +157,6 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 								{[
 									filters.platform !== "All" ? 1 : 0,
 									filters.locations.length,
-									filters.priceRange[0] !== 0 || filters.priceRange[1] !== 10000 ? 1 : 0,
 									filters.followersRange[0] !== 0 || filters.followersRange[1] !== 1000 ? 1 : 0,
 								].reduce((a, b) => a + b, 0)}
 							</span>

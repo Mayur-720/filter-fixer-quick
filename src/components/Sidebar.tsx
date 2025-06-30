@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
 	Users,
@@ -21,11 +22,11 @@ interface SidebarProps {
 
 const genres = [
 	{ name: "All Creators", icon: Users },
-	{ name: "Video Editing/AI", icon: Video },
-	{ name: "Tips & Tricks/AI", icon: Lightbulb },
-	{ name: "Tech Products", icon: Laptop },
-	{ name: "Lifestyle", icon: Heart },
+	{ name: "AI Creators", icon: Lightbulb },
+	{ name: "Video Editing", icon: Video },
+	{ name: "Tech Product", icon: Laptop },
 	{ name: "Business", icon: Building2 },
+	{ name: "Lifestyle", icon: Heart },
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({

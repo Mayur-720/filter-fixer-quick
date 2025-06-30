@@ -1,3 +1,4 @@
+
 const express = require("express");
 const router = express.Router();
 const Creator = require("../models/Creator");
@@ -24,13 +25,14 @@ router.get("/", async (req, res) => {
 			socialLink: creator.socialLink,
 			location: creator.location,
 			details: {
+				location: creator.details.location || creator.location,
 				bio: creator.details.bio,
 				analytics: {
 					followers: creator.details.analytics.followers,
 					totalViews: creator.details.analytics.totalViews,
+					averageViews: creator.details.analytics.averageViews,
 				},
 				reels: creator.details.reels,
-				pricing: creator.details.pricing,
 				tags: creator.details.tags,
 			},
 			createdAt: creator.createdAt,
@@ -61,14 +63,16 @@ router.get("/:id", async (req, res) => {
 			avatar: creator.avatar,
 			platform: creator.platform,
 			socialLink: creator.socialLink,
+			location: creator.location,
 			details: {
+				location: creator.details.location || creator.location,
 				bio: creator.details.bio,
 				analytics: {
 					followers: creator.details.analytics.followers,
 					totalViews: creator.details.analytics.totalViews,
+					averageViews: creator.details.analytics.averageViews,
 				},
 				reels: creator.details.reels,
-				pricing: creator.details.pricing,
 				tags: creator.details.tags,
 			},
 			createdAt: creator.createdAt,
@@ -103,7 +107,6 @@ router.post("/", async (req, res) => {
 				if (details.analytics.totalViews === undefined)
 					missingFields.push("details.analytics.totalViews");
 			}
-			if (!details.pricing) missingFields.push("details.pricing");
 		}
 
 		if (missingFields.length > 0) {
@@ -147,14 +150,16 @@ router.post("/", async (req, res) => {
 			avatar: creator.avatar,
 			platform: creator.platform,
 			socialLink: creator.socialLink,
+			location: creator.location,
 			details: {
+				location: creator.details.location || creator.location,
 				bio: creator.details.bio,
 				analytics: {
 					followers: creator.details.analytics.followers,
 					totalViews: creator.details.analytics.totalViews,
+					averageViews: creator.details.analytics.averageViews,
 				},
 				reels: creator.details.reels,
-				pricing: creator.details.pricing,
 				tags: creator.details.tags,
 			},
 			createdAt: creator.createdAt,
@@ -197,7 +202,6 @@ router.put("/:id", async (req, res) => {
 				if (details.analytics.totalViews === undefined)
 					missingFields.push("details.analytics.totalViews");
 			}
-			if (!details.pricing) missingFields.push("details.pricing");
 		}
 
 		if (missingFields.length > 0) {
@@ -247,14 +251,16 @@ router.put("/:id", async (req, res) => {
 			avatar: creator.avatar,
 			platform: creator.platform,
 			socialLink: creator.socialLink,
+			location: creator.location,
 			details: {
+				location: creator.details.location || creator.location,
 				bio: creator.details.bio,
 				analytics: {
 					followers: creator.details.analytics.followers,
 					totalViews: creator.details.analytics.totalViews,
+					averageViews: creator.details.analytics.averageViews,
 				},
 				reels: creator.details.reels,
-				pricing: creator.details.pricing,
 				tags: creator.details.tags,
 			},
 			createdAt: creator.createdAt,

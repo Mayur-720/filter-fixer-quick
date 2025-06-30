@@ -56,6 +56,10 @@ const creatorSchema = new mongoose.Schema(
 					required: true,
 					min: 0,
 				},
+				averageViews: {
+					type: Number,
+					min: 0,
+				},
 				engagement: {
 					type: String,
 					trim: true,
@@ -67,11 +71,6 @@ const creatorSchema = new mongoose.Schema(
 					trim: true,
 				},
 			],
-			pricing: {
-				type: String,
-				required: true,
-				trim: true,
-			},
 			tags: [
 				{
 					type: String,

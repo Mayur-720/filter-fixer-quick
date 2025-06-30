@@ -1,3 +1,4 @@
+
 export interface Creator {
 	_id?: string;
 	name: string;
@@ -13,10 +14,10 @@ export interface Creator {
 		analytics: {
 			followers: number;
 			totalViews: number;
+			averageViews?: number;
 			engagement?: string;
 		};
 		reels: string[];
-		pricing: string;
 		tags: string[];
 	};
 	createdAt?: string;

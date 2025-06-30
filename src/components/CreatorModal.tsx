@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Creator } from "../types/Creator";
 import {
@@ -5,10 +6,8 @@ import {
 	Users,
 	Eye,
 	Star,
-	DollarSign,
 	Play,
 	Instagram,
-	IndianRupee,
 } from "lucide-react";
 import { useInstagramData } from "../hooks/useInstagramData";
 
@@ -21,6 +20,15 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 	const { media: instagramMedia, loading: instagramLoading } = useInstagramData(
 		creator.platform === "Instagram" ? creator.socialLink : ""
 	);
+
+	const formatNumber = (num: number) => {
+		if (num >= 1000000) {
+			return `${(num / 1000000).toFixed(1)}M`;
+		} else if (num >= 1000) {
+			return `${(num / 1000).toFixed(1)}K`;
+		}
+		return num.toString();
+	};
 
 	return (
 		<div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -77,9 +85,22 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 											</span>
 										</div>
 										<span className="font-semibold text-foreground">
-											{creator.details.analytics.followers.toLocaleString()}
+											{formatNumber(creator.details.analytics.followers)}
 										</span>
 									</div>
+									{creator.details.analytics.averageViews && (
+										<div className="flex items-center justify-between">
+											<div className="flex items-center space-x-2">
+												<Eye size={16} className="text-green-500" />
+												<span className="text-sm text-muted-foreground">
+													Average Views
+												</span>
+											</div>
+											<span className="font-semibold text-foreground">
+												{formatNumber(creator.details.analytics.averageViews)}
+											</span>
+										</div>
+									)}
 									<div className="flex items-center justify-between">
 										<div className="flex items-center space-x-2">
 											<Eye size={16} className="text-blue-500" />
@@ -88,18 +109,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 											</span>
 										</div>
 										<span className="font-semibold text-foreground">
-											{creator.details.analytics.totalViews.toLocaleString()}
-										</span>
-									</div>
-									<div className="flex items-center justify-between">
-										<div className="flex items-center space-x-2">
-											<Star size={16} className="text-yellow-500" />
-											<span className="text-sm text-muted-foreground">
-												Engagement
-											</span>
-										</div>
-										<span className="font-semibold text-foreground">
-											{creator.details.analytics.engagement}
+											{formatNumber(creator.details.analytics.totalViews)}
 										</span>
 									</div>
 								</div>
@@ -201,16 +211,6 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 							</div>
 
 							<div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-xl p-6">
-								<div className="flex items-center space-x-3 mb-4">
-									<IndianRupee size={24} className="text-purple-600" />
-
-									<h4 className="text-lg font-semibold text-foreground">
-										Pricing
-									</h4>
-								</div>
-								<h3 className="text-foreground mb-4">
-									{creator.details.pricing}
-								</h3>
 								<div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
 									<button className="flex-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 px-6 rounded-lg font-medium hover:shadow-lg transition-all duration-200">
 										Contact Creator
