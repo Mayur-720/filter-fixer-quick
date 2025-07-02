@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Creator } from "../types/Creator";
 import {
@@ -14,7 +13,8 @@ import {
 	Volume2,
 	VolumeX,
 	Maximize,
-	Download,
+	SkipBack,
+	SkipForward,
 } from "lucide-react";
 import { useInstagramData } from "../hooks/useInstagramData";
 
@@ -32,6 +32,8 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [isMuted, setIsMuted] = useState(false);
 	const [zoomLevel, setZoomLevel] = useState(1);
+	const [currentTime, setCurrentTime] = useState(0);
+	const [duration, setDuration] = useState(0);
 
 	const formatNumber = (num: number) => {
 		if (num >= 1000000) {
@@ -45,10 +47,10 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 	const handleMediaClick = (media: any) => {
 		setSelectedMedia(media);
 		setZoomLevel(1);
+		setIsPlaying(false);
 	};
 
 	const handleVideoPlay = () => {
-		setIsPlaying(!isPlaying);
 		const video = document.getElementById('modal-video') as HTMLVideoElement;
 		if (video) {
 			if (isPlaying) {
@@ -56,15 +58,38 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 			} else {
 				video.play();
 			}
+			setIsPlaying(!isPlaying);
 		}
 	};
 
 	const handleMute = () => {
-		setIsMuted(!isMuted);
 		const video = document.getElementById('modal-video') as HTMLVideoElement;
 		if (video) {
 			video.muted = !isMuted;
+			setIsMuted(!isMuted);
 		}
+	};
+
+	const handleTimeUpdate = () => {
+		const video = document.getElementById('modal-video') as HTMLVideoElement;
+		if (video) {
+			setCurrentTime(video.currentTime);
+			setDuration(video.duration);
+		}
+	};
+
+	const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const video = document.getElementById('modal-video') as HTMLVideoElement;
+		if (video) {
+			video.currentTime = parseFloat(e.target.value);
+			setCurrentTime(video.currentTime);
+		}
+	};
+
+	const formatTime = (time: number) => {
+		const minutes = Math.floor(time / 60);
+		const seconds = Math.floor(time % 60);
+		return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 	};
 
 	const handleZoomIn = () => {
@@ -124,7 +149,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 								</div>
 							</div>
 
-							<div className="bg-accent rounded-xl p-4 mb-6">
+							<div className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-xl p-4 mb-6">
 								<h4 className="font-semibold text-foreground mb-3">
 									Quick Stats
 								</h4>
@@ -178,6 +203,51 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 									{creator.details.bio}
 								</p>
 							</div>
+
+							{/* Creator's Media Gallery */}
+							{creator.details.media && creator.details.media.length > 0 && (
+								<div>
+									<h4 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+										<Star size={20} className="text-yellow-500" />
+										Media Gallery
+									</h4>
+									<div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+										{creator.details.media.map((item) => (
+											<div
+												key={item.id}
+												className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-lg aspect-square flex items-center justify-center cursor-pointer hover:shadow-lg transition-all duration-300 group relative overflow-hidden"
+												onClick={() => handleMediaClick(item)}
+											>
+												{item.type === 'video' ? (
+													<div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 flex items-center justify-center">
+														<Play
+															size={32}
+															className="text-blue-500 group-hover:text-blue-600 transition-colors drop-shadow-md"
+														/>
+													</div>
+												) : (
+													<div className="w-full h-full bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 flex items-center justify-center">
+														<ZoomIn
+															size={32}
+															className="text-purple-500 group-hover:text-purple-600 transition-colors drop-shadow-md"
+														/>
+													</div>
+												)}
+
+												<div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+
+												{item.caption && (
+													<div className="absolute bottom-2 left-2 right-2 text-xs text-white bg-black/70 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+														{item.caption.length > 30
+															? `${item.caption.substring(0, 30)}...`
+															: item.caption}
+													</div>
+												)}
+											</div>
+										))}
+									</div>
+								</div>
+							)}
 
 							{/* Instagram Media Section */}
 							{creator.platform === "Instagram" && (
@@ -276,67 +346,101 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 				</div>
 			</div>
 
-			{/* Media Viewer Modal */}
+			{/* Enhanced Media Viewer Modal */}
 			{selectedMedia && (
-				<div className="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-60">
-					<div id="media-viewer" className="relative max-w-4xl max-h-full">
+				<div className="fixed inset-0 bg-black/95 flex items-center justify-center p-4 z-60">
+					<div id="media-viewer" className="relative max-w-5xl max-h-full w-full">
 						<div className="absolute top-4 right-4 flex gap-2 z-10">
 							<button
-								onClick={handleFullscreen}
-								className="p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
-							>
-								<Maximize size={20} />
-							</button>
-							<button
 								onClick={() => setSelectedMedia(null)}
-								className="p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+								className="p-3 bg-black/70 text-white rounded-full hover:bg-black/90 transition-colors backdrop-blur-sm"
 							>
-								<X size={20} />
+								<X size={24} />
 							</button>
 						</div>
 
-						{selectedMedia.media_type === 'VIDEO' ? (
-							<div className="relative">
+						{selectedMedia.type === 'video' ? (
+							<div className="relative rounded-lg overflow-hidden bg-black">
 								<video
 									id="modal-video"
-									className="max-w-full max-h-[80vh] rounded-lg"
-									controls
-									autoPlay
-									src={selectedMedia.media_url}
+									className="w-full max-h-[70vh] object-contain"
+									src={selectedMedia.url}
+									onTimeUpdate={handleTimeUpdate}
+									onLoadedMetadata={handleTimeUpdate}
+									poster={selectedMedia.thumbnail}
 								/>
-								<div className="absolute bottom-4 left-4 flex gap-2">
-									<button
-										onClick={handleVideoPlay}
-										className="p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
-									>
-										{isPlaying ? <Pause size={20} /> : <Play size={20} />}
-									</button>
-									<button
-										onClick={handleMute}
-										className="p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
-									>
-										{isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-									</button>
+								
+								{/* Modern Video Controls */}
+								<div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+									{/* Progress Bar */}
+									<div className="mb-4">
+										<input
+											type="range"
+											min="0"
+											max={duration || 0}
+											value={currentTime}
+											onChange={handleSeek}
+											className="w-full h-1 bg-white/30 rounded-lg appearance-none cursor-pointer slider"
+										/>
+										<div className="flex justify-between text-xs text-white/70 mt-1">
+											<span>{formatTime(currentTime)}</span>
+											<span>{formatTime(duration)}</span>
+										</div>
+									</div>
+									
+									{/* Control Buttons */}
+									<div className="flex items-center justify-center gap-4">
+										<button
+											onClick={() => {
+												const video = document.getElementById('modal-video') as HTMLVideoElement;
+												if (video) video.currentTime = Math.max(0, video.currentTime - 10);
+											}}
+											className="p-2 text-white hover:text-blue-400 transition-colors"
+										>
+											<SkipBack size={24} />
+										</button>
+										<button
+											onClick={handleVideoPlay}
+											className="p-3 bg-white/20 text-white rounded-full hover:bg-white/30 transition-colors backdrop-blur-sm"
+										>
+											{isPlaying ? <Pause size={24} /> : <Play size={24} />}
+										</button>
+										<button
+											onClick={() => {
+												const video = document.getElementById('modal-video') as HTMLVideoElement;
+												if (video) video.currentTime = Math.min(duration, video.currentTime + 10);
+											}}
+											className="p-2 text-white hover:text-blue-400 transition-colors"
+										>
+											<SkipForward size={24} />
+										</button>
+										<button
+											onClick={handleMute}
+											className="p-2 text-white hover:text-blue-400 transition-colors"
+										>
+											{isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+										</button>
+									</div>
 								</div>
 							</div>
 						) : (
-							<div className="relative">
+							<div className="relative flex items-center justify-center">
 								<img
-									src={selectedMedia.media_url}
+									src={selectedMedia.url}
 									alt="Media content"
-									className="max-w-full max-h-[80vh] rounded-lg transition-transform duration-200"
+									className="max-w-full max-h-[80vh] rounded-lg transition-transform duration-200 object-contain"
 									style={{ transform: `scale(${zoomLevel})` }}
 								/>
 								<div className="absolute bottom-4 left-4 flex gap-2">
 									<button
-										onClick={handleZoomIn}
-										className="p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+										onClick={() => setZoomLevel(prev => Math.min(prev + 0.5, 3))}
+										className="p-3 bg-black/70 text-white rounded-full hover:bg-black/90 transition-colors backdrop-blur-sm"
 									>
 										<ZoomIn size={20} />
 									</button>
 									<button
-										onClick={handleZoomOut}
-										className="p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+										onClick={() => setZoomLevel(prev => Math.max(prev - 0.5, 0.5))}
+										className="p-3 bg-black/70 text-white rounded-full hover:bg-black/90 transition-colors backdrop-blur-sm"
 									>
 										<ZoomOut size={20} />
 									</button>
@@ -345,8 +449,8 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 						)}
 
 						{selectedMedia.caption && (
-							<div className="mt-4 p-4 bg-black/50 text-white rounded-lg">
-								<p>{selectedMedia.caption}</p>
+							<div className="mt-4 p-4 bg-black/70 text-white rounded-lg backdrop-blur-sm">
+								<p className="text-center">{selectedMedia.caption}</p>
 							</div>
 						)}
 					</div>

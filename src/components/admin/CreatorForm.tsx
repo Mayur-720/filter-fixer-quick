@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { CreateCreatorData } from "../../services/api";
 import { useCreators } from "../../hooks/useCreators";
@@ -15,7 +14,10 @@ import {
 } from "../ui/select";
 import { Creator } from "@/types/Creator";
 import ImageUpload from "../ImageUpload";
+import MediaManager from "./MediaManager";
 import { imageUploadAPI } from "../../services/imageUpload";
+import { mediaAPI } from "../../services/mediaAPI";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 interface CreatorFormProps {
 	creator?: Creator | null;
@@ -46,6 +48,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 		tags: [],
 	});
 	const [currentPublicId, setCurrentPublicId] = useState<string | null>(null);
+	const [media, setMedia] = useState(creator?.details?.media || []);
 
 	// Populate form with creator data when editing
 	useEffect(() => {
@@ -80,6 +83,28 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 			} catch (error) {
 				console.error('Failed to delete image:', error);
 			}
+		}
+	};
+
+	const handleMediaAdd = async (file: File, caption: string) => {
+		if (!creator?._id) return;
+		
+		try {
+			const newMedia = await mediaAPI.addMedia(creator._id, file, caption);
+			setMedia(prev => [...prev, newMedia]);
+		} catch (error) {
+			console.error('Failed to add media:', error);
+		}
+	};
+
+	const handleMediaDelete = async (mediaId: string) => {
+		if (!creator?._id) return;
+		
+		try {
+			await mediaAPI.deleteMedia(creator._id, mediaId);
+			setMedia(prev => prev.filter(item => item.id !== mediaId));
+		} catch (error) {
+			console.error('Failed to delete media:', error);
 		}
 	};
 
@@ -163,7 +188,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 	};
 
 	return (
-		<div className="p-6 max-w-4xl mx-auto">
+		<div className="p-6 max-w-6xl mx-auto">
 			<h2 className="text-2xl font-bold mb-6">
 				{creator ? "Edit Creator" : "Add New Creator"}
 			</h2>
@@ -174,202 +199,226 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 				</div>
 			)}
 
-			<form onSubmit={handleSubmit} className="space-y-6">
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-					{/* Left Column - Basic Information */}
-					<div className="space-y-4">
+			<Tabs defaultValue="basic" className="w-full">
+				<TabsList className="grid w-full grid-cols-2">
+					<TabsTrigger value="basic">Basic Information</TabsTrigger>
+					<TabsTrigger value="media" disabled={!creator}>Media Gallery</TabsTrigger>
+				</TabsList>
+
+				<TabsContent value="basic" className="space-y-6">
+					<form onSubmit={handleSubmit} className="space-y-6">
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+							{/* Left Column - Basic Information */}
+							<div className="space-y-4">
+								<div>
+									<Label htmlFor="name">Name *</Label>
+									<Input
+										id="name"
+										value={formData.name}
+										onChange={(e) => handleInputChange("name", e.target.value)}
+										required
+										placeholder="Enter creator's name"
+									/>
+								</div>
+
+								<div>
+									<Label htmlFor="genre">Genre *</Label>
+									<Select
+										value={formData.genre}
+										onValueChange={(value) => handleInputChange("genre", value)}
+									>
+										<SelectTrigger>
+											<SelectValue placeholder="Select a genre" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="AI Creators">AI Creators</SelectItem>
+											<SelectItem value="Video Editing">Video Editing</SelectItem>
+											<SelectItem value="Tech Product">Tech Product</SelectItem>
+											<SelectItem value="Lifestyle">Lifestyle</SelectItem>
+											<SelectItem value="Business">Business</SelectItem>
+										</SelectContent>
+									</Select>
+								</div>
+
+								<div>
+									<Label>Avatar Image *</Label>
+									<ImageUpload
+										currentImage={formData.avatar}
+										onImageUpload={handleImageUpload}
+										onImageDelete={handleImageDelete}
+										className="mt-2"
+									/>
+								</div>
+
+								<div>
+									<Label htmlFor="platform">Platform *</Label>
+									<Select
+										value={formData.platform}
+										onValueChange={(value) => handleInputChange("platform", value)}
+									>
+										<SelectTrigger>
+											<SelectValue placeholder="Select a platform" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="Instagram">Instagram</SelectItem>
+											<SelectItem value="YouTube">YouTube</SelectItem>
+											<SelectItem value="TikTok">TikTok</SelectItem>
+											<SelectItem value="Twitter">Twitter</SelectItem>
+											<SelectItem value="Other">Other</SelectItem>
+										</SelectContent>
+									</Select>
+								</div>
+
+								<div>
+									<Label htmlFor="socialLink">Social Profile URL *</Label>
+									<Input
+										id="socialLink"
+										value={formData.socialLink}
+										onChange={(e) => handleInputChange("socialLink", e.target.value)}
+										placeholder="https://instagram.com/username"
+										type="url"
+										required
+									/>
+								</div>
+
+								<div>
+									<Label htmlFor="location">Location</Label>
+									<Select
+										value={formData.location}
+										onValueChange={(value) => handleInputChange("location", value)}
+									>
+										<SelectTrigger>
+											<SelectValue placeholder="Select location" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="USA">USA</SelectItem>
+											<SelectItem value="Canada">Canada</SelectItem>
+											<SelectItem value="UK">UK</SelectItem>
+											<SelectItem value="Australia">Australia</SelectItem>
+											<SelectItem value="Germany">Germany</SelectItem>
+											<SelectItem value="France">France</SelectItem>
+											<SelectItem value="India">India</SelectItem>
+											<SelectItem value="Japan">Japan</SelectItem>
+											<SelectItem value="Brazil">Brazil</SelectItem>
+											<SelectItem value="Spain">Spain</SelectItem>
+											<SelectItem value="Other">Other</SelectItem>
+										</SelectContent>
+									</Select>
+								</div>
+							</div>
+
+							{/* Right Column - Analytics and Other Fields */}
+							<div className="space-y-4">
+								<div>
+									<Label htmlFor="followers">Followers *</Label>
+									<Input
+										id="followers"
+										type="number"
+										step="0.1"
+										value={formData.followers}
+										onChange={(e) =>
+											handleInputChange("followers", parseFloat(e.target.value) || 0)
+										}
+										placeholder="e.g., 1000.5"
+										min="0"
+										required
+									/>
+								</div>
+
+								<div>
+									<Label htmlFor="totalViews">Total Views *</Label>
+									<Input
+										id="totalViews"
+										type="number"
+										value={formData.totalViews}
+										onChange={(e) =>
+											handleInputChange("totalViews", parseInt(e.target.value) || 0)
+										}
+										placeholder="e.g., 50000"
+										min="0"
+										required
+									/>
+								</div>
+
+								<div>
+									<Label htmlFor="engagement">Engagement Rate</Label>
+									<Input
+										id="engagement"
+										value={formData.engagement}
+										onChange={(e) => handleInputChange("engagement", e.target.value)}
+										placeholder="e.g., 3.2% or High"
+									/>
+								</div>
+
+								<div>
+									<Label htmlFor="tags">Tags (comma-separated)</Label>
+									<Input
+										id="tags"
+										value={formData.tags.join(", ")}
+										onChange={(e) => handleArrayChange("tags", e.target.value)}
+										placeholder="tech, AI, editing"
+									/>
+								</div>
+							</div>
+						</div>
+
+						{/* Full width fields */}
 						<div>
-							<Label htmlFor="name">Name *</Label>
-							<Input
-								id="name"
-								value={formData.name}
-								onChange={(e) => handleInputChange("name", e.target.value)}
+							<Label htmlFor="bio">Bio *</Label>
+							<Textarea
+								id="bio"
+								value={formData.bio}
+								onChange={(e) => handleInputChange("bio", e.target.value)}
+								rows={4}
+								placeholder="Creator biography..."
 								required
-								placeholder="Enter creator's name"
+								className="min-h-[100px]"
 							/>
 						</div>
 
 						<div>
-							<Label htmlFor="genre">Genre *</Label>
-							<Select
-								value={formData.genre}
-								onValueChange={(value) => handleInputChange("genre", value)}
-							>
-								<SelectTrigger>
-									<SelectValue placeholder="Select a genre" />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="AI Creators">AI Creators</SelectItem>
-									<SelectItem value="Video Editing">Video Editing</SelectItem>
-									<SelectItem value="Tech Product">Tech Product</SelectItem>
-									<SelectItem value="Lifestyle">Lifestyle</SelectItem>
-									<SelectItem value="Business">Business</SelectItem>
-								</SelectContent>
-							</Select>
-						</div>
-
-						<div>
-							<Label>Avatar Image *</Label>
-							<ImageUpload
-								currentImage={formData.avatar}
-								onImageUpload={handleImageUpload}
-								onImageDelete={handleImageDelete}
-								className="mt-2"
+							<Label htmlFor="reels">Reel URLs (comma-separated)</Label>
+							<Textarea
+								id="reels"
+								value={formData.reels.join(", ")}
+								onChange={(e) => handleArrayChange("reels", e.target.value)}
+								rows={3}
+								placeholder="https://example.com/reel1, https://example.com/reel2"
+								className="min-h-[80px]"
 							/>
 						</div>
 
-						<div>
-							<Label htmlFor="platform">Platform *</Label>
-							<Select
-								value={formData.platform}
-								onValueChange={(value) => handleInputChange("platform", value)}
-							>
-								<SelectTrigger>
-									<SelectValue placeholder="Select a platform" />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="Instagram">Instagram</SelectItem>
-									<SelectItem value="YouTube">YouTube</SelectItem>
-									<SelectItem value="TikTok">TikTok</SelectItem>
-									<SelectItem value="Twitter">Twitter</SelectItem>
-									<SelectItem value="Other">Other</SelectItem>
-								</SelectContent>
-							</Select>
+						{/* Form Actions */}
+						<div className="flex justify-end space-x-4 pt-6 border-t">
+							<Button type="button" variant="outline" onClick={onCancel}>
+								Cancel
+							</Button>
+							<Button type="submit" disabled={loading}>
+								{loading
+									? "Saving..."
+									: creator
+									? "Update Creator"
+									: "Create Creator"}
+							</Button>
 						</div>
+					</form>
+				</TabsContent>
 
-						<div>
-							<Label htmlFor="socialLink">Social Profile URL *</Label>
-							<Input
-								id="socialLink"
-								value={formData.socialLink}
-								onChange={(e) => handleInputChange("socialLink", e.target.value)}
-								placeholder="https://instagram.com/username"
-								type="url"
-								required
-							/>
+				<TabsContent value="media">
+					{creator?._id ? (
+						<MediaManager
+							creatorId={creator._id}
+							media={media}
+							onMediaAdd={handleMediaAdd}
+							onMediaDelete={handleMediaDelete}
+						/>
+					) : (
+						<div className="text-center py-8 text-gray-500">
+							Save the creator first to manage media files
 						</div>
-
-						<div>
-							<Label htmlFor="location">Location</Label>
-							<Select
-								value={formData.location}
-								onValueChange={(value) => handleInputChange("location", value)}
-							>
-								<SelectTrigger>
-									<SelectValue placeholder="Select location" />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="USA">USA</SelectItem>
-									<SelectItem value="Canada">Canada</SelectItem>
-									<SelectItem value="UK">UK</SelectItem>
-									<SelectItem value="Australia">Australia</SelectItem>
-									<SelectItem value="Germany">Germany</SelectItem>
-									<SelectItem value="France">France</SelectItem>
-									<SelectItem value="India">India</SelectItem>
-									<SelectItem value="Japan">Japan</SelectItem>
-									<SelectItem value="Brazil">Brazil</SelectItem>
-									<SelectItem value="Spain">Spain</SelectItem>
-									<SelectItem value="Other">Other</SelectItem>
-								</SelectContent>
-							</Select>
-						</div>
-					</div>
-
-					{/* Right Column - Analytics and Other Fields */}
-					<div className="space-y-4">
-						<div>
-							<Label htmlFor="followers">Followers *</Label>
-							<Input
-								id="followers"
-								type="number"
-								step="0.1"
-								value={formData.followers}
-								onChange={(e) =>
-									handleInputChange("followers", parseFloat(e.target.value) || 0)
-								}
-								placeholder="e.g., 1000.5"
-								min="0"
-								required
-							/>
-						</div>
-
-						<div>
-							<Label htmlFor="totalViews">Total Views *</Label>
-							<Input
-								id="totalViews"
-								type="number"
-								value={formData.totalViews}
-								onChange={(e) =>
-									handleInputChange("totalViews", parseInt(e.target.value) || 0)
-								}
-								placeholder="e.g., 50000"
-								min="0"
-								required
-							/>
-						</div>
-
-						<div>
-							<Label htmlFor="engagement">Engagement Rate</Label>
-							<Input
-								id="engagement"
-								value={formData.engagement}
-								onChange={(e) => handleInputChange("engagement", e.target.value)}
-								placeholder="e.g., 3.2% or High"
-							/>
-						</div>
-
-						<div>
-							<Label htmlFor="tags">Tags (comma-separated)</Label>
-							<Input
-								id="tags"
-								value={formData.tags.join(", ")}
-								onChange={(e) => handleArrayChange("tags", e.target.value)}
-								placeholder="tech, AI, editing"
-							/>
-						</div>
-					</div>
-				</div>
-
-				{/* Full width fields */}
-				<div>
-					<Label htmlFor="bio">Bio *</Label>
-					<Textarea
-						id="bio"
-						value={formData.bio}
-						onChange={(e) => handleInputChange("bio", e.target.value)}
-						rows={4}
-						placeholder="Creator biography..."
-						required
-						className="min-h-[100px]"
-					/>
-				</div>
-
-				<div>
-					<Label htmlFor="reels">Reel URLs (comma-separated)</Label>
-					<Textarea
-						id="reels"
-						value={formData.reels.join(", ")}
-						onChange={(e) => handleArrayChange("reels", e.target.value)}
-						rows={3}
-						placeholder="https://example.com/reel1, https://example.com/reel2"
-						className="min-h-[80px]"
-					/>
-				</div>
-
-				{/* Form Actions */}
-				<div className="flex justify-end space-x-4 pt-6 border-t">
-					<Button type="button" variant="outline" onClick={onCancel}>
-						Cancel
-					</Button>
-					<Button type="submit" disabled={loading}>
-						{loading
-							? "Saving..."
-							: creator
-							? "Update Creator"
-							: "Create Creator"}
-					</Button>
-				</div>
-			</form>
+					)}
+				</TabsContent>
+			</Tabs>
 		</div>
 	);
 };
