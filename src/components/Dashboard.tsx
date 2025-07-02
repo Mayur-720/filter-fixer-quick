@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import CreatorCard from "./CreatorCard";
@@ -53,12 +52,13 @@ const Dashboard: React.FC<DashboardProps> = ({
 
 	const filteredCreators = useMemo(() => {
 		return allCreators.filter((creator) => {
-			// Genre filter - Fixed to match exact genre
+			// Genre filter
 			if (activeGenre !== "All Creators") {
-				// Check if creator.genre matches the activeGenre exactly
-				if (creator.genre !== activeGenre) {
-					return false;
-				}
+				const creatorTags = creator.details?.tags || [];
+				const genreMatch = creatorTags.some((tag) =>
+					tag.toLowerCase().includes(activeGenre.toLowerCase())
+				);
+				if (!genreMatch) return false;
 			}
 
 			// Search filter
@@ -68,8 +68,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 				const tagsMatch = creator.details?.tags?.some((tag) =>
 					tag.toLowerCase().includes(searchLower)
 				);
-				const genreMatch = creator.genre.toLowerCase().includes(searchLower);
-				if (!nameMatch && !tagsMatch && !genreMatch) return false;
+				if (!nameMatch && !tagsMatch) return false;
 			}
 
 			// Platform filter

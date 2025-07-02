@@ -1,4 +1,3 @@
-
 const express = require("express");
 const router = express.Router();
 const Creator = require("../models/Creator");
@@ -10,12 +9,10 @@ router.get("/", async (req, res) => {
 		const { genre } = req.query;
 		let query = {};
 		if (genre && genre !== "All Creators") {
-			// Exact match for genre
 			query.genre = genre;
 		}
 
 		const creators = await Creator.find(query);
-		console.log(`Found ${creators.length} creators for genre: ${genre || 'All'}`);
 
 		// Transform data to match frontend interface
 		const transformedCreators = creators.map((creator) => ({
