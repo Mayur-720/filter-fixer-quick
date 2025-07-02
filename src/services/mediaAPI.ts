@@ -36,8 +36,11 @@ export const mediaService = {
     return response.data;
   },
 
-  // Convenience method used by CreatorForm
+  // Add media to a creator (alias for uploadMedia for consistency)
   addMedia: async (creatorId: string, file: File, caption?: string): Promise<MediaFile> => {
     return await mediaService.uploadMedia(creatorId, file, caption);
   },
 };
+
+// Export the service as default and named export for flexibility
+export default mediaService;

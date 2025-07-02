@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { CreateCreatorData } from "../../services/api";
 import { useCreators } from "../../hooks/useCreators";
