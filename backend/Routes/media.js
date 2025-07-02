@@ -43,7 +43,11 @@ router.post('/:creatorId', upload.single('media'), async (req, res) => {
       createdAt: new Date(),
     };
 
-    creator.details.media = creator.details.media || [];
+    // Initialize media array if it doesn't exist
+    if (!creator.details.media) {
+      creator.details.media = [];
+    }
+    
     creator.details.media.push(mediaFile);
     
     await creator.save();
