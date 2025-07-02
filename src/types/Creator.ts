@@ -19,17 +19,7 @@ export interface Creator {
 		};
 		reels: string[];
 		tags: string[];
-		media?: MediaFile[];
 	};
 	createdAt?: string;
 	updatedAt?: string;
-}
-
-export interface MediaFile {
-	id: string;
-	type: 'image' | 'video';
-	url: string;
-	thumbnail?: string;
-	caption?: string;
-	createdAt: string;
 }

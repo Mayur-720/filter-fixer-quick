@@ -10,12 +10,10 @@ router.get("/", async (req, res) => {
 		const { genre } = req.query;
 		let query = {};
 		if (genre && genre !== "All Creators") {
-			// Exact match for genre
 			query.genre = genre;
 		}
 
 		const creators = await Creator.find(query);
-		console.log(`Found ${creators.length} creators for genre: ${genre || 'All'}`);
 
 		// Transform data to match frontend interface
 		const transformedCreators = creators.map((creator) => ({
@@ -36,7 +34,6 @@ router.get("/", async (req, res) => {
 				},
 				reels: creator.details.reels,
 				tags: creator.details.tags,
-				media: creator.details.media || [],
 			},
 			createdAt: creator.createdAt,
 			updatedAt: creator.updatedAt,
@@ -77,7 +74,6 @@ router.get("/:id", async (req, res) => {
 				},
 				reels: creator.details.reels,
 				tags: creator.details.tags,
-				media: creator.details.media || [],
 			},
 			createdAt: creator.createdAt,
 			updatedAt: creator.updatedAt,
@@ -165,7 +161,6 @@ router.post("/", async (req, res) => {
 				},
 				reels: creator.details.reels,
 				tags: creator.details.tags,
-				media: creator.details.media || [],
 			},
 			createdAt: creator.createdAt,
 			updatedAt: creator.updatedAt,
@@ -267,7 +262,6 @@ router.put("/:id", async (req, res) => {
 				},
 				reels: creator.details.reels,
 				tags: creator.details.tags,
-				media: creator.details.media || [],
 			},
 			createdAt: creator.createdAt,
 			updatedAt: creator.updatedAt,

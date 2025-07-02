@@ -1,38 +1,37 @@
-
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { PrimeReactProvider } from "primereact/api";
+
 import Index from "./pages/Index";
-import Admin from "./pages/Admin";
-import AdminRoute from "./components/AdminRoute";
 import NotFound from "./pages/NotFound";
-import { Toaster } from "./components/ui/toaster";
-import "./App.css";
+import Demo from "./Demo";
+import Admin from "./pages/Admin";
+import "primereact/resources/themes/saga-blue/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+const queryClient = new QueryClient();
 
-const queryClient = new QueryClient({
-	defaultOptions: {
-		queries: {
-			retry: 1,
-			refetchOnWindowFocus: false,
-		},
-	},
-});
-
-function App() {
-	return (
-		<QueryClientProvider client={queryClient}>
-			<Router>
-				<div className="min-h-screen bg-gray-50">
+const App = () => (
+	<QueryClientProvider client={queryClient}>
+		<PrimeReactProvider>
+			<TooltipProvider>
+				<Toaster />
+				<Sonner />
+				<BrowserRouter>
 					<Routes>
 						<Route path="/" element={<Index />} />
-						<Route path="/admin-access" element={<AdminRoute />} />
+						<Route path="/demo" element={<Demo />} />
 						<Route path="/admin" element={<Admin />} />
+						{/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
 						<Route path="*" element={<NotFound />} />
 					</Routes>
-					<Toaster />
-				</div>
-			</Router>
-		</QueryClientProvider>
-	);
-}
+				</BrowserRouter>
+			</TooltipProvider>
+		</PrimeReactProvider>
+	</QueryClientProvider>
+);
 
 export default App;

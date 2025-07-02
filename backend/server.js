@@ -1,4 +1,3 @@
-
 require("dotenv").config({ path: "./.env" });
 
 const express = require("express");
@@ -41,12 +40,10 @@ app.get("/", (req, res) => {
 const creatorRoutes = require("./routes/creators");
 const uploadRoutes = require("./routes/upload");
 const instagramRoutes = require("./routes/instagram");
-const mediaRoutes = require("./routes/media");
 
 app.use("/api/creators", creatorRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/instagram", instagramRoutes);
-app.use("/api/media", mediaRoutes);
 
 // ✅ Error Handling Middleware
 app.use((err, req, res, next) => {
