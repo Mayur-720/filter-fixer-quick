@@ -1,4 +1,3 @@
-
 const express = require("express");
 const router = express.Router();
 const Creator = require("../models/Creator");
@@ -34,6 +33,7 @@ router.get("/", async (req, res) => {
 				},
 				reels: creator.details.reels,
 				tags: creator.details.tags,
+				media: creator.details.media || [],
 			},
 			createdAt: creator.createdAt,
 			updatedAt: creator.updatedAt,
@@ -74,6 +74,7 @@ router.get("/:id", async (req, res) => {
 				},
 				reels: creator.details.reels,
 				tags: creator.details.tags,
+				media: creator.details.media || [],
 			},
 			createdAt: creator.createdAt,
 			updatedAt: creator.updatedAt,
@@ -161,6 +162,7 @@ router.post("/", async (req, res) => {
 				},
 				reels: creator.details.reels,
 				tags: creator.details.tags,
+				media: creator.details.media || [],
 			},
 			createdAt: creator.createdAt,
 			updatedAt: creator.updatedAt,
@@ -262,6 +264,7 @@ router.put("/:id", async (req, res) => {
 				},
 				reels: creator.details.reels,
 				tags: creator.details.tags,
+				media: creator.details.media || [],
 			},
 			createdAt: creator.createdAt,
 			updatedAt: creator.updatedAt,

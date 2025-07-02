@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Creator } from "../types/Creator";
 import {
 	X,
@@ -8,6 +8,13 @@ import {
 	Star,
 	Play,
 	Instagram,
+	ZoomIn,
+	ZoomOut,
+	Pause,
+	Volume2,
+	VolumeX,
+	Maximize,
+	Download,
 } from "lucide-react";
 import { useInstagramData } from "../hooks/useInstagramData";
 
@@ -21,6 +28,11 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 		creator.platform === "Instagram" ? creator.socialLink : ""
 	);
 
+	const [selectedMedia, setSelectedMedia] = useState<any>(null);
+	const [isPlaying, setIsPlaying] = useState(false);
+	const [isMuted, setIsMuted] = useState(false);
+	const [zoomLevel, setZoomLevel] = useState(1);
+
 	const formatNumber = (num: number) => {
 		if (num >= 1000000) {
 			return `${(num / 1000000).toFixed(1)}M`;
@@ -28,6 +40,46 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 			return `${(num / 1000).toFixed(1)}K`;
 		}
 		return num.toString();
+	};
+
+	const handleMediaClick = (media: any) => {
+		setSelectedMedia(media);
+		setZoomLevel(1);
+	};
+
+	const handleVideoPlay = () => {
+		setIsPlaying(!isPlaying);
+		const video = document.getElementById('modal-video') as HTMLVideoElement;
+		if (video) {
+			if (isPlaying) {
+				video.pause();
+			} else {
+				video.play();
+			}
+		}
+	};
+
+	const handleMute = () => {
+		setIsMuted(!isMuted);
+		const video = document.getElementById('modal-video') as HTMLVideoElement;
+		if (video) {
+			video.muted = !isMuted;
+		}
+	};
+
+	const handleZoomIn = () => {
+		setZoomLevel(prev => Math.min(prev + 0.5, 3));
+	};
+
+	const handleZoomOut = () => {
+		setZoomLevel(prev => Math.max(prev - 0.5, 0.5));
+	};
+
+	const handleFullscreen = () => {
+		const element = document.getElementById('media-viewer');
+		if (element) {
+			element.requestFullscreen();
+		}
 	};
 
 	return (
@@ -150,12 +202,14 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 												<div
 													key={item.id}
 													className="bg-accent rounded-lg aspect-square flex items-center justify-center cursor-pointer hover:shadow-md transition-all duration-200 group relative overflow-hidden"
+													onClick={() => handleMediaClick(item)}
 												>
 													{item.media_type === "IMAGE" ? (
 														<div className="w-full h-full bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 flex items-center justify-center">
-															<span className="text-sm text-muted-foreground">
-																Image Post
-															</span>
+															<ZoomIn
+																size={24}
+																className="text-muted-foreground group-hover:text-purple-500 transition-colors"
+															/>
 														</div>
 													) : (
 														<div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 flex items-center justify-center">
@@ -221,6 +275,83 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 					</div>
 				</div>
 			</div>
+
+			{/* Media Viewer Modal */}
+			{selectedMedia && (
+				<div className="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-60">
+					<div id="media-viewer" className="relative max-w-4xl max-h-full">
+						<div className="absolute top-4 right-4 flex gap-2 z-10">
+							<button
+								onClick={handleFullscreen}
+								className="p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+							>
+								<Maximize size={20} />
+							</button>
+							<button
+								onClick={() => setSelectedMedia(null)}
+								className="p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+							>
+								<X size={20} />
+							</button>
+						</div>
+
+						{selectedMedia.media_type === 'VIDEO' ? (
+							<div className="relative">
+								<video
+									id="modal-video"
+									className="max-w-full max-h-[80vh] rounded-lg"
+									controls
+									autoPlay
+									src={selectedMedia.media_url}
+								/>
+								<div className="absolute bottom-4 left-4 flex gap-2">
+									<button
+										onClick={handleVideoPlay}
+										className="p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+									>
+										{isPlaying ? <Pause size={20} /> : <Play size={20} />}
+									</button>
+									<button
+										onClick={handleMute}
+										className="p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+									>
+										{isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+									</button>
+								</div>
+							</div>
+						) : (
+							<div className="relative">
+								<img
+									src={selectedMedia.media_url}
+									alt="Media content"
+									className="max-w-full max-h-[80vh] rounded-lg transition-transform duration-200"
+									style={{ transform: `scale(${zoomLevel})` }}
+								/>
+								<div className="absolute bottom-4 left-4 flex gap-2">
+									<button
+										onClick={handleZoomIn}
+										className="p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+									>
+										<ZoomIn size={20} />
+									</button>
+									<button
+										onClick={handleZoomOut}
+										className="p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+									>
+										<ZoomOut size={20} />
+									</button>
+								</div>
+							</div>
+						)}
+
+						{selectedMedia.caption && (
+							<div className="mt-4 p-4 bg-black/50 text-white rounded-lg">
+								<p>{selectedMedia.caption}</p>
+							</div>
+						)}
+					</div>
+				</div>
+			)}
 		</div>
 	);
 };
