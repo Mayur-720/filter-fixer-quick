@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { CreateCreatorData } from "../../services/api";
 import { useCreators } from "../../hooks/useCreators";
@@ -16,7 +17,7 @@ import { Creator } from "@/types/Creator";
 import ImageUpload from "../ImageUpload";
 import MediaManager from "./MediaManager";
 import { imageUploadAPI } from "../../services/imageUpload";
-import { mediaAPI } from "../../services/mediaAPI";
+import { mediaService } from "../../services/mediaAPI";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 interface CreatorFormProps {
@@ -90,7 +91,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 		if (!creator?._id) return;
 		
 		try {
-			const newMedia = await mediaAPI.addMedia(creator._id, file, caption);
+			const newMedia = await mediaService.addMedia(creator._id, file, caption);
 			setMedia(prev => [...prev, newMedia]);
 		} catch (error) {
 			console.error('Failed to add media:', error);
@@ -101,7 +102,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 		if (!creator?._id) return;
 		
 		try {
-			await mediaAPI.deleteMedia(creator._id, mediaId);
+			await mediaService.deleteMedia(creator._id, mediaId);
 			setMedia(prev => prev.filter(item => item.id !== mediaId));
 		} catch (error) {
 			console.error('Failed to delete media:', error);

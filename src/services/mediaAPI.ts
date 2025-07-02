@@ -35,4 +35,9 @@ export const mediaService = {
     const response = await mediaAPI.get(`/${creatorId}`);
     return response.data;
   },
+
+  // Convenience method used by CreatorForm
+  addMedia: async (creatorId: string, file: File, caption?: string): Promise<MediaFile> => {
+    return await mediaService.uploadMedia(creatorId, file, caption);
+  },
 };
