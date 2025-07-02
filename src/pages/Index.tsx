@@ -56,11 +56,11 @@ const Index = () => {
 							<nav className="flex-1 p-2 space-y-1">
 								{[
 									{ name: "All Creators", icon: "Users" },
-									{ name: "AI Creators", icon: "Lightbulb" },
-									{ name: "Video Editing", icon: "Video" },
-									{ name: "Tech Product", icon: "Laptop" },
-									{ name: "Business", icon: "Building2" },
+									{ name: "Video Editing/AI", icon: "Video" },
+									{ name: "Tips & Tricks/AI", icon: "Lightbulb" },
+									{ name: "Tech Products", icon: "Laptop" },
 									{ name: "Lifestyle", icon: "Heart" },
+									{ name: "Business", icon: "Building2" },
 								].map((genre) => {
 									const isActive = activeGenre === genre.name;
 

@@ -18,7 +18,7 @@ import {
 	SelectValue,
 } from "./ui/select";
 import { Slider } from "./ui/slider";
-import { X, MapPin, Users, Monitor, Search } from "lucide-react";
+import { X, MapPin, DollarSign, Users, Monitor, Search, Check } from "lucide-react";
 import { Checkbox } from "./ui/checkbox";
 
 interface FilterState {
@@ -175,8 +175,17 @@ const FilterDialog: React.FC<FilterDialogProps> = ({
 	const hasActiveFilters =
 		filters.platform !== "All" ||
 		filters.locations.length > 0 ||
+		filters.priceRange[0] !== 0 ||
+		filters.priceRange[1] !== 10000 ||
 		filters.followersRange[0] !== 0 ||
 		filters.followersRange[1] !== 1000;
+
+	const formatPrice = (price: number) => {
+		if (price >= 1000) {
+			return `₹${(price / 1000).toFixed(0)}K`;
+		}
+		return `₹${price}`;
+	};
 
 	const formatFollowers = (followers: number) => {
 		if (followers >= 1000) {
@@ -194,7 +203,8 @@ const FilterDialog: React.FC<FilterDialogProps> = ({
 						Filter Creators
 					</DialogTitle>
 					<DialogDescription>
-						Filter creators by platform, location, and follower count
+						Filter creators by platform, location, price range, and follower
+						count
 					</DialogDescription>
 				</DialogHeader>
 
@@ -288,6 +298,35 @@ const FilterDialog: React.FC<FilterDialogProps> = ({
 						</div>
 					</div>
 
+					{/* Price Range Filter */}
+					<div className="space-y-4">
+						<Label className="flex items-center gap-2 text-sm font-medium">
+							<DollarSign className="h-4 w-4 text-yellow-500" />
+							Price Range
+						</Label>
+						<div className="px-3">
+							<Slider
+								value={filters.priceRange}
+								onValueChange={(value) =>
+									handleFilterChange("priceRange", value as [number, number])
+								}
+								max={10000}
+								min={0}
+								step={500}
+								className="w-full"
+							/>
+							<div className="flex justify-between items-center mt-2 text-sm text-gray-600">
+								<span className="font-medium">
+									{formatPrice(filters.priceRange[0])}
+								</span>
+								<span className="text-gray-400">to</span>
+								<span className="font-medium">
+									{formatPrice(filters.priceRange[1])}
+								</span>
+							</div>
+						</div>
+					</div>
+
 					{/* Followers Range Filter */}
 					<div className="space-y-4">
 						<Label className="flex items-center gap-2 text-sm font-medium">
@@ -337,6 +376,12 @@ const FilterDialog: React.FC<FilterDialogProps> = ({
 										{location}
 									</span>
 								))}
+								{(filters.priceRange[0] !== 0 || filters.priceRange[1] !== 10000) && (
+									<span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs">
+										{formatPrice(filters.priceRange[0])} -{" "}
+										{formatPrice(filters.priceRange[1])}
+									</span>
+								)}
 								{(filters.followersRange[0] !== 0 ||
 									filters.followersRange[1] !== 1000) && (
 									<span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs">

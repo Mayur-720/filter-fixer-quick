@@ -1,4 +1,3 @@
-
 const express = require("express");
 const router = express.Router();
 const Creator = require("../models/Creator");
@@ -10,12 +9,10 @@ router.get("/", async (req, res) => {
 		const { genre } = req.query;
 		let query = {};
 		if (genre && genre !== "All Creators") {
-			// Exact match for genre
 			query.genre = genre;
 		}
 
 		const creators = await Creator.find(query);
-		console.log(`Found ${creators.length} creators for genre: ${genre || 'All'}`);
 
 		// Transform data to match frontend interface
 		const transformedCreators = creators.map((creator) => ({
@@ -27,16 +24,14 @@ router.get("/", async (req, res) => {
 			socialLink: creator.socialLink,
 			location: creator.location,
 			details: {
-				location: creator.details.location || creator.location,
 				bio: creator.details.bio,
 				analytics: {
 					followers: creator.details.analytics.followers,
 					totalViews: creator.details.analytics.totalViews,
-					averageViews: creator.details.analytics.averageViews,
 				},
 				reels: creator.details.reels,
+				pricing: creator.details.pricing,
 				tags: creator.details.tags,
-				media: creator.details.media || [],
 			},
 			createdAt: creator.createdAt,
 			updatedAt: creator.updatedAt,
@@ -66,18 +61,15 @@ router.get("/:id", async (req, res) => {
 			avatar: creator.avatar,
 			platform: creator.platform,
 			socialLink: creator.socialLink,
-			location: creator.location,
 			details: {
-				location: creator.details.location || creator.location,
 				bio: creator.details.bio,
 				analytics: {
 					followers: creator.details.analytics.followers,
 					totalViews: creator.details.analytics.totalViews,
-					averageViews: creator.details.analytics.averageViews,
 				},
 				reels: creator.details.reels,
+				pricing: creator.details.pricing,
 				tags: creator.details.tags,
-				media: creator.details.media || [],
 			},
 			createdAt: creator.createdAt,
 			updatedAt: creator.updatedAt,
@@ -111,6 +103,7 @@ router.post("/", async (req, res) => {
 				if (details.analytics.totalViews === undefined)
 					missingFields.push("details.analytics.totalViews");
 			}
+			if (!details.pricing) missingFields.push("details.pricing");
 		}
 
 		if (missingFields.length > 0) {
@@ -154,18 +147,15 @@ router.post("/", async (req, res) => {
 			avatar: creator.avatar,
 			platform: creator.platform,
 			socialLink: creator.socialLink,
-			location: creator.location,
 			details: {
-				location: creator.details.location || creator.location,
 				bio: creator.details.bio,
 				analytics: {
 					followers: creator.details.analytics.followers,
 					totalViews: creator.details.analytics.totalViews,
-					averageViews: creator.details.analytics.averageViews,
 				},
 				reels: creator.details.reels,
+				pricing: creator.details.pricing,
 				tags: creator.details.tags,
-				media: creator.details.media || [],
 			},
 			createdAt: creator.createdAt,
 			updatedAt: creator.updatedAt,
@@ -207,6 +197,7 @@ router.put("/:id", async (req, res) => {
 				if (details.analytics.totalViews === undefined)
 					missingFields.push("details.analytics.totalViews");
 			}
+			if (!details.pricing) missingFields.push("details.pricing");
 		}
 
 		if (missingFields.length > 0) {
@@ -256,18 +247,15 @@ router.put("/:id", async (req, res) => {
 			avatar: creator.avatar,
 			platform: creator.platform,
 			socialLink: creator.socialLink,
-			location: creator.location,
 			details: {
-				location: creator.details.location || creator.location,
 				bio: creator.details.bio,
 				analytics: {
 					followers: creator.details.analytics.followers,
 					totalViews: creator.details.analytics.totalViews,
-					averageViews: creator.details.analytics.averageViews,
 				},
 				reels: creator.details.reels,
+				pricing: creator.details.pricing,
 				tags: creator.details.tags,
-				media: creator.details.media || [],
 			},
 			createdAt: creator.createdAt,
 			updatedAt: creator.updatedAt,

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Creator } from "../types/Creator";
 import {
@@ -10,7 +9,6 @@ import {
 	MapPin,
 	Users,
 	Eye,
-	Tag,
 } from "lucide-react";
 
 interface CreatorCardProps {
@@ -56,7 +54,7 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 				<div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
 
 				{/* Avatar Section */}
-				<div className="relative h-52 overflow-hidden rounded-t-xl bg-gradient-to-br from-purple-100 to-pink-100">
+				<div className="relative aspect-square overflow-hidden rounded-t-xl bg-gradient-to-br from-purple-100 to-pink-100">
 					<img
 						src={creator.avatar || "/fallback-avatar.png"}
 						alt={`${creator.name}'s avatar`}
@@ -66,14 +64,6 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 							(e.target as HTMLImageElement).src = "/fallback-avatar.png";
 						}}
 					/>
-
-					{/* Genre Badge */}
-					<div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 shadow-lg">
-						<div className="flex items-center gap-1">
-							<Tag size={12} className="text-purple-500" />
-							<span className="text-xs font-medium text-gray-700">{creator.genre}</span>
-						</div>
-					</div>
 
 					{/* Overlay with stats - appears on hover */}
 					<div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-4">
@@ -90,12 +80,6 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 									{formatNumber(creator.details?.analytics.totalViews || 0)}
 								</span>
 							</div>
-							{creator.details?.analytics.averageViews && (
-								<div className="flex items-center gap-2 text-sm">
-									<Eye size={14} />
-									<span>Avg: {formatNumber(creator.details.analytics.averageViews)}</span>
-								</div>
-							)}
 						</div>
 					</div>
 
@@ -106,27 +90,33 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 				</div>
 
 				{/* Content Section */}
-				<div className="p-4">
-					<div className="mb-3">
+				<div className="p-4 space-y-3">
+					<div className="space-y-2">
 						<h3 className="text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors duration-300 truncate">
 							{creator.name}
 						</h3>
 
-						<div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
+						<div className="flex items-center gap-2 text-sm text-gray-500">
 							<MapPin size={12} />
 							<span className="truncate">{creator.location}</span>
 						</div>
 					</div>
 
 					{/* Action Section */}
-					<div className="flex items-center justify-end pt-2 border-t border-gray-100">
+					<div className="flex items-center justify-between pt-2 border-t border-gray-100">
+						<div className="text-sm">
+							<span className="font-semibold text-gray-900">
+								₹{creator.details?.pricing || "Contact for pricing"}
+							</span>
+						</div>
+
 						<a
 							href={
 								creator.socialLink || "https://www.instagram.com/saarvendra/"
 							}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md"
+							className="flex items-center gap-2 border-2 hover:from-purple-600 hover:to-pink-600  px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md"
 							aria-label={`Visit ${creator.name}'s ${
 								creator.platform || "Instagram"
 							} profile`}
