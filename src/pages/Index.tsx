@@ -4,7 +4,8 @@ import Sidebar from "../components/Sidebar";
 import Dashboard from "../components/Dashboard";
 import CreatorModal from "../components/CreatorModal";
 import { Creator } from "../types/Creator";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Settings } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Index = () => {
 	const [activeGenre, setActiveGenre] = useState("All Creators");
@@ -78,6 +79,17 @@ const Index = () => {
 										</button>
 									);
 								})}
+								
+								{/* Admin Access Link */}
+								<div className="pt-4 border-t border-gray-200">
+									<Link
+										to="/admin-access"
+										className="w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-purple-600 transition-all duration-200"
+									>
+										<Settings size={16} />
+										<span className="font-medium">Admin Panel</span>
+									</Link>
+								</div>
 							</nav>
 						</div>
 					</>
@@ -94,12 +106,20 @@ const Index = () => {
 						<h1 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
 							CreatorHub
 						</h1>
-						<button
-							onClick={() => setIsMobileMenuOpen(true)}
-							className="p-2 rounded-lg hover:bg-gray-100"
-						>
-							<Menu size={24} />
-						</button>
+						<div className="flex items-center gap-2">
+							<Link
+								to="/admin-access"
+								className="p-2 rounded-lg hover:bg-gray-100"
+							>
+								<Settings size={20} className="text-gray-700" />
+							</Link>
+							<button
+								onClick={() => setIsMobileMenuOpen(true)}
+								className="p-2 rounded-lg hover:bg-gray-100"
+							>
+								<Menu size={24} />
+							</button>
+						</div>
 					</div>
 
 					<Dashboard

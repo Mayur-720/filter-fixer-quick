@@ -137,6 +137,15 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 								<h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">
 									{creator.name}
 								</h3>
+								
+								{/* Genre Display */}
+								<div className="mb-4">
+									<span className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700 text-sm font-medium rounded-full">
+										<Star size={16} />
+										{creator.genre}
+									</span>
+								</div>
+
 								<div className="flex flex-wrap gap-2 justify-center mb-4">
 									{creator.details.tags.map((tag, index) => (
 										<span
