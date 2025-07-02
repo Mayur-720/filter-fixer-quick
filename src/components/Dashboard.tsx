@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import CreatorCard from "./CreatorCard";
@@ -21,7 +20,10 @@ interface FilterState {
 	followersRange: [number, number];
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) => {
+const Dashboard: React.FC<DashboardProps> = ({
+	activeGenre,
+	onCreatorClick,
+}) => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
 	const [filters, setFilters] = useState<FilterState>({
@@ -31,7 +33,11 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 		followersRange: [0, 1000],
 	});
 
-	const { data: creators = [], isLoading, error } = useQuery({
+	const {
+		data: creators = [],
+		isLoading,
+		error,
+	} = useQuery({
 		queryKey: ["creators"],
 		queryFn: () => creatorAPI.getAll(),
 		meta: {
@@ -41,7 +47,8 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 		},
 	});
 
-	const allCreators: Creator[] = Array.isArray(creators) && creators.length > 0 ? creators : mockCreators;
+	const allCreators: Creator[] =
+		Array.isArray(creators) && creators.length > 0 ? creators : mockCreators;
 
 	const filteredCreators = useMemo(() => {
 		return allCreators.filter((creator) => {
@@ -49,7 +56,7 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 			if (activeGenre !== "All Creators") {
 				const creatorTags = creator.details?.tags || [];
 				const genreMatch = creatorTags.some((tag) =>
-					tag.toLowerCase().includes(activeGenre.toLowerCase().replace(/\/ai/g, ""))
+					tag.toLowerCase().includes(activeGenre.toLowerCase())
 				);
 				if (!genreMatch) return false;
 			}
@@ -66,31 +73,29 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 
 			// Platform filter
 			if (filters.platform !== "All") {
-				if (creator.platform?.toLowerCase() !== filters.platform.toLowerCase()) {
+				if (
+					creator.platform?.toLowerCase() !== filters.platform.toLowerCase()
+				) {
 					return false;
 				}
 			}
 
 			// Location filter
 			if (filters.locations.length > 0) {
-				const creatorLocation = creator.location || creator.details?.location || "";
+				const creatorLocation =
+					creator.location || creator.details?.location || "";
 				if (!filters.locations.includes(creatorLocation)) {
 					return false;
 				}
 			}
 
-			// Price range filter
-			const pricing = creator.details?.pricing || "₹0";
-			const priceMatch = pricing.match(/₹(\d+)/);
-			const price = priceMatch ? parseInt(priceMatch[1]) : 0;
-			if (price < filters.priceRange[0] || price > filters.priceRange[1]) {
-				return false;
-			}
-
 			// Followers range filter
 			const followers = creator.details?.analytics?.followers || 0;
 			const followersInK = followers / 1000;
-			if (followersInK < filters.followersRange[0] || followersInK > filters.followersRange[1]) {
+			if (
+				followersInK < filters.followersRange[0] ||
+				followersInK > filters.followersRange[1]
+			) {
 				return false;
 			}
 
@@ -110,8 +115,6 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 	const hasActiveFilters =
 		filters.platform !== "All" ||
 		filters.locations.length > 0 ||
-		filters.priceRange[0] !== 0 ||
-		filters.priceRange[1] !== 10000 ||
 		filters.followersRange[0] !== 0 ||
 		filters.followersRange[1] !== 1000;
 
@@ -130,10 +133,10 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 
 	return (
 		<div className="flex-1 overflow-auto">
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+			<div className="max-w-full mx-auto px-3 sm:px-4 lg:px-6 py-3">
 				{/* Header */}
-				<div className="mb-4">
-					<h1 className="text-2xl font-bold text-gray-900 mb-1">
+				<div className="mb-3">
+					<h1 className="text-xl font-bold text-gray-900 mb-1">
 						{activeGenre}
 					</h1>
 					<p className="text-gray-600 text-sm">
@@ -142,14 +145,14 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 				</div>
 
 				{/* Search and Filter Bar */}
-				<div className="mb-4 flex flex-col sm:flex-row gap-3">
+				<div className="mb-3 flex flex-col sm:flex-row gap-2">
 					<div className="relative flex-1">
 						<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
 						<Input
 							placeholder="Search creators by name or tags..."
 							value={searchTerm}
 							onChange={(e) => setSearchTerm(e.target.value)}
-							className="pl-9 pr-4 py-2 w-full h-9"
+							className="pl-9 pr-4 py-2 w-full h-8"
 						/>
 					</div>
 					<button
@@ -167,8 +170,10 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 								{[
 									filters.platform !== "All" ? 1 : 0,
 									filters.locations.length,
-									filters.priceRange[0] !== 0 || filters.priceRange[1] !== 10000 ? 1 : 0,
-									filters.followersRange[0] !== 0 || filters.followersRange[1] !== 1000 ? 1 : 0,
+									filters.followersRange[0] !== 0 ||
+									filters.followersRange[1] !== 1000
+										? 1
+										: 0,
 								].reduce((a, b) => a + b, 0)}
 							</span>
 						)}
@@ -176,16 +181,17 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 				</div>
 
 				{/* Results count */}
-				<div className="mb-3">
+				<div className="mb-2">
 					<p className="text-xs text-gray-600">
-						{filteredCreators.length} creator{filteredCreators.length !== 1 ? "s" : ""} found
+						{filteredCreators.length} creator
+						{filteredCreators.length !== 1 ? "s" : ""} found
 						{searchTerm && ` for "${searchTerm}"`}
 					</p>
 				</div>
 
 				{/* Content */}
 				<div className="flex-1 overflow-y-auto">
-					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-3 lg:gap-4">
+					<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
 						{filteredCreators.map((creator) => (
 							<CreatorCard
 								key={creator._id || creator.name}
@@ -201,9 +207,12 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 							<div className="text-gray-400 mb-3">
 								<Search className="h-10 w-10 mx-auto" />
 							</div>
-							<h3 className="text-lg font-medium text-gray-900 mb-2">No creators found</h3>
+							<h3 className="text-lg font-medium text-gray-900 mb-2">
+								No creators found
+							</h3>
 							<p className="text-gray-600 mb-4 text-sm">
-								Try adjusting your search terms or filters to find more creators.
+								Try adjusting your search terms or filters to find more
+								creators.
 							</p>
 							{hasActiveFilters && (
 								<button
