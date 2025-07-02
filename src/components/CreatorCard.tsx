@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Creator } from "../types/Creator";
 import {
@@ -55,7 +54,7 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 				<div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
 
 				{/* Avatar Section */}
-				<div className="relative aspect-square overflow-hidden rounded-t-xl bg-gradient-to-br from-purple-100 to-pink-100">
+				<div className="relative h-52 overflow-hidden rounded-t-xl bg-gradient-to-br from-purple-100 to-pink-100">
 					<img
 						src={creator.avatar || "/fallback-avatar.png"}
 						alt={`${creator.name}'s avatar`}
@@ -91,8 +90,8 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 				</div>
 
 				{/* Content Section */}
-				<div className="p-4 space-y-3">
-					<div className="space-y-2">
+				<div className="p-4 flex justify-between items-start gap-4">
+					<div>
 						<h3 className="text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors duration-300 truncate">
 							{creator.name}
 						</h3>
@@ -102,8 +101,6 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 							<span className="truncate">{creator.location}</span>
 						</div>
 					</div>
-
-					{/* Action Section */}
 					<div className="flex items-center justify-end pt-2 border-t border-gray-100">
 						<a
 							href={
@@ -121,6 +118,8 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 							<span>Visit</span>
 						</a>
 					</div>
+
+					{/* Action Section */}
 				</div>
 
 				{/* Shimmer effect on hover */}

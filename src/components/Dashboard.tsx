@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import CreatorCard from "./CreatorCard";
@@ -21,7 +20,10 @@ interface FilterState {
 	followersRange: [number, number];
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) => {
+const Dashboard: React.FC<DashboardProps> = ({
+	activeGenre,
+	onCreatorClick,
+}) => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
 	const [filters, setFilters] = useState<FilterState>({
@@ -31,7 +33,11 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 		followersRange: [0, 1000],
 	});
 
-	const { data: creators = [], isLoading, error } = useQuery({
+	const {
+		data: creators = [],
+		isLoading,
+		error,
+	} = useQuery({
 		queryKey: ["creators"],
 		queryFn: () => creatorAPI.getAll(),
 		meta: {
@@ -41,7 +47,8 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 		},
 	});
 
-	const allCreators: Creator[] = Array.isArray(creators) && creators.length > 0 ? creators : mockCreators;
+	const allCreators: Creator[] =
+		Array.isArray(creators) && creators.length > 0 ? creators : mockCreators;
 
 	const filteredCreators = useMemo(() => {
 		return allCreators.filter((creator) => {
@@ -66,14 +73,17 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 
 			// Platform filter
 			if (filters.platform !== "All") {
-				if (creator.platform?.toLowerCase() !== filters.platform.toLowerCase()) {
+				if (
+					creator.platform?.toLowerCase() !== filters.platform.toLowerCase()
+				) {
 					return false;
 				}
 			}
 
 			// Location filter
 			if (filters.locations.length > 0) {
-				const creatorLocation = creator.location || creator.details?.location || "";
+				const creatorLocation =
+					creator.location || creator.details?.location || "";
 				if (!filters.locations.includes(creatorLocation)) {
 					return false;
 				}
@@ -82,7 +92,10 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 			// Followers range filter
 			const followers = creator.details?.analytics?.followers || 0;
 			const followersInK = followers / 1000;
-			if (followersInK < filters.followersRange[0] || followersInK > filters.followersRange[1]) {
+			if (
+				followersInK < filters.followersRange[0] ||
+				followersInK > filters.followersRange[1]
+			) {
 				return false;
 			}
 
@@ -157,7 +170,10 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 								{[
 									filters.platform !== "All" ? 1 : 0,
 									filters.locations.length,
-									filters.followersRange[0] !== 0 || filters.followersRange[1] !== 1000 ? 1 : 0,
+									filters.followersRange[0] !== 0 ||
+									filters.followersRange[1] !== 1000
+										? 1
+										: 0,
 								].reduce((a, b) => a + b, 0)}
 							</span>
 						)}
@@ -167,14 +183,15 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 				{/* Results count */}
 				<div className="mb-2">
 					<p className="text-xs text-gray-600">
-						{filteredCreators.length} creator{filteredCreators.length !== 1 ? "s" : ""} found
+						{filteredCreators.length} creator
+						{filteredCreators.length !== 1 ? "s" : ""} found
 						{searchTerm && ` for "${searchTerm}"`}
 					</p>
 				</div>
 
 				{/* Content */}
 				<div className="flex-1 overflow-y-auto">
-					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+					<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
 						{filteredCreators.map((creator) => (
 							<CreatorCard
 								key={creator._id || creator.name}
@@ -190,9 +207,12 @@ const Dashboard: React.FC<DashboardProps> = ({ activeGenre, onCreatorClick }) =>
 							<div className="text-gray-400 mb-3">
 								<Search className="h-10 w-10 mx-auto" />
 							</div>
-							<h3 className="text-lg font-medium text-gray-900 mb-2">No creators found</h3>
+							<h3 className="text-lg font-medium text-gray-900 mb-2">
+								No creators found
+							</h3>
 							<p className="text-gray-600 mb-4 text-sm">
-								Try adjusting your search terms or filters to find more creators.
+								Try adjusting your search terms or filters to find more
+								creators.
 							</p>
 							{hasActiveFilters && (
 								<button

@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
 	Users,
@@ -43,12 +42,20 @@ const Sidebar: React.FC<SidebarProps> = ({
 		>
 			{/* Header */}
 			<div className="p-4 border-b border-gray-200 flex items-center justify-between">
-				{!isCollapsed && (
+				{!isCollapsed ? (
 					<div className="w-full">
 						<img
 							src="https://res.cloudinary.com/ds7bybp6g/image/upload/v1750859567/creatordream_nlvcgd.png"
 							alt="logo"
-							className="w-full object-contain"
+							className="h-10 w-auto object-contain"
+						/>
+					</div>
+				) : (
+					<div className="w-full flex items-center justify-center">
+						<img
+							src="https://res.cloudinary.com/ds7bybp6g/image/upload/v1750859567/creatordream_nlvcgd.png" // Use a smaller version or crop if available
+							alt="logo"
+							className="h-8 w-auto object-contain"
 						/>
 					</div>
 				)}
