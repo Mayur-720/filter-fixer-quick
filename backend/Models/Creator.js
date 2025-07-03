@@ -103,18 +103,8 @@ const creatorSchema = new mongoose.Schema(
 					type: Number,
 					min: 0,
 				},
-				engagement: {
-					type: String,
-					trim: true,
-				},
 			},
 			reels: [
-				{
-					type: String,
-					trim: true,
-				},
-			],
-			tags: [
 				{
 					type: String,
 					trim: true,

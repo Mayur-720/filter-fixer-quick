@@ -70,26 +70,10 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 								className="w-32 h-32 rounded-full border-4 border-white object-cover"
 							/>
 						</div>
-
-						{/* Media Kit Button - Fixed in bottom right */}
-						{creator.mediaKit && (
-							<div className="fixed bottom-6 right-6 z-50">
-								<button
-									onClick={handleVisitMediaKit}
-									className="group bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
-									title="Visit Media Kit"
-								>
-									<FileText size={18} />
-									<span className="hidden group-hover:inline-block transition-all duration-300">
-										Visit Media Kit
-									</span>
-								</button>
-							</div>
-						)}
 					</div>
 
 					{/* Content */}
-					<div className="pt-20 px-6 pb-6">
+					<div className="pt-20 px-6 pb-6 relative">
 						{/* Basic Info */}
 						<div className="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-6">
 							<div>
@@ -221,22 +205,19 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 							</div>
 						)}
 
-						{/* Tags */}
-						{creator.details?.tags && creator.details.tags.length > 0 && (
-							<div>
-								<h3 className="text-lg font-semibold text-gray-900 mb-3">
-									Tags
-								</h3>
-								<div className="flex flex-wrap gap-2">
-									{creator.details.tags.map((tag, index) => (
-										<span
-											key={index}
-											className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm"
-										>
-											#{tag}
-										</span>
-									))}
-								</div>
+						{/* Media Kit Button - Inside dialog at bottom right */}
+						{creator.mediaKit && (
+							<div className="absolute bottom-6 right-6">
+								<button
+									onClick={handleVisitMediaKit}
+									className="group bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+									title="Visit Media Kit"
+								>
+									<FileText size={18} />
+									<span className="hidden group-hover:inline-block transition-all duration-300">
+										Visit Media Kit
+									</span>
+								</button>
 							</div>
 						)}
 					</div>

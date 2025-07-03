@@ -19,10 +19,8 @@ export interface Creator {
 			followers: number;
 			totalViews: number;
 			averageViews?: number;
-			engagement?: string;
 		};
 		reels: string[];
-		tags: string[];
 		media?: MediaFile[];
 	};
 	createdAt?: string;

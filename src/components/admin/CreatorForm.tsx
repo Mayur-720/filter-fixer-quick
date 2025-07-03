@@ -46,7 +46,6 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 		bio: "",
 		followers: 0,
 		totalViews: 0,
-		engagement: "",
 		reels: [],
 		tags: [],
 		averageViews: 0,
@@ -70,9 +69,8 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 				followers: creator.details?.analytics?.followers || 0,
 				totalViews: creator.details?.analytics?.totalViews || 0,
 				averageViews: creator.details?.analytics?.averageViews || 0,
-				engagement: creator.details?.analytics?.engagement || "",
 				reels: creator.details?.reels || [],
-				tags: creator.details?.tags || [],
+				tags: [],
 			});
 		}
 	}, [creator]);
@@ -163,9 +161,8 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 							followers: parseFloat(csvData.followers) || 0,
 							totalViews: parseInt(csvData.totalviews || csvData.total_views) || 0,
 							averageViews: parseInt(csvData.averageviews || csvData.average_views) || 0,
-							engagement: csvData.engagement || '',
 							reels: csvData.reels ? csvData.reels.split(';').map((r: string) => r.trim()) : [],
-							tags: csvData.tags ? csvData.tags.split(';').map((t: string) => t.trim()) : [],
+							tags: [],
 						};
 
 						// Validate required fields
@@ -258,9 +255,8 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 				followers: parseFloat(formData.followers.toString()) || 0,
 				totalViews: parseInt(formData.totalViews.toString()) || 0,
 				averageViews: parseInt(formData.averageViews.toString()) || 0,
-				engagement: formData.engagement,
 				reels: formData.reels || [],
-				tags: formData.tags || [],
+				tags: [],
 			};
 
 			if (creator) {
@@ -284,7 +280,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 		setFormData((prev) => ({ ...prev, [field]: value }));
 	};
 
-	const handleArrayChange = (field: "reels" | "tags", value: string) => {
+	const handleArrayChange = (field: "reels", value: string) => {
 		const items = value
 			.split(",")
 			.map((item) => item.trim())
@@ -493,26 +489,6 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 										}
 										placeholder="e.g., 5000"
 										min="0"
-									/>
-								</div>
-
-								<div>
-									<Label htmlFor="engagement">Engagement Rate</Label>
-									<Input
-										id="engagement"
-										value={formData.engagement}
-										onChange={(e) => handleInputChange("engagement", e.target.value)}
-										placeholder="e.g., 3.2% or High"
-									/>
-								</div>
-
-								<div>
-									<Label htmlFor="tags">Tags (comma-separated)</Label>
-									<Input
-										id="tags"
-										value={formData.tags.join(", ")}
-										onChange={(e) => handleArrayChange("tags", e.target.value)}
-										placeholder="tech, AI, editing"
 									/>
 								</div>
 							</div>

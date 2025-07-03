@@ -54,7 +54,6 @@ export interface CreateCreatorData {
 	followers: number;
 	totalViews: number;
 	averageViews?: number;
-	engagement?: string;
 	reels: string[];
 	tags: string[];
 }
@@ -92,7 +91,6 @@ export const creatorAPI = {
 					followers: data.followers,
 					totalViews: data.totalViews,
 					averageViews: data.averageViews,
-					engagement: data.engagement,
 				},
 				reels: data.reels,
 				tags: data.tags,
@@ -104,6 +102,10 @@ export const creatorAPI = {
 
 	// Update creator
 	update: async (id: string, data: UpdateCreatorData): Promise<Creator> => {
+		// First get the current creator to preserve media
+		const currentCreator = await api.get(`/creators/${id}`);
+		const existingMedia = currentCreator.data.details?.media || [];
+
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const updateData: any = {};
 
@@ -121,14 +123,13 @@ export const creatorAPI = {
 			data.followers ||
 			data.totalViews ||
 			data.averageViews ||
-			data.engagement ||
 			data.reels ||
 			data.tags
 		) {
 			updateData.details = {};
 			if (data.bio) updateData.details.bio = data.bio;
 			if (data.location) updateData.details.location = data.location;
-			if (data.followers || data.totalViews || data.averageViews || data.engagement) {
+			if (data.followers || data.totalViews || data.averageViews) {
 				updateData.details.analytics = {};
 				if (data.followers)
 					updateData.details.analytics.followers = data.followers;
@@ -136,11 +137,12 @@ export const creatorAPI = {
 					updateData.details.analytics.totalViews = data.totalViews;
 				if (data.averageViews)
 					updateData.details.analytics.averageViews = data.averageViews;
-				if (data.engagement)
-					updateData.details.analytics.engagement = data.engagement;
 			}
 			if (data.reels) updateData.details.reels = data.reels;
 			if (data.tags) updateData.details.tags = data.tags;
+			
+			// Always preserve existing media
+			updateData.details.media = existingMedia;
 		}
 
 		const response = await api.put(`/creators/${id}`, updateData);

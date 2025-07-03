@@ -1,4 +1,3 @@
-
 const express = require("express");
 const router = express.Router();
 const Creator = require("../models/Creator");
@@ -35,10 +34,8 @@ router.get("/", async (req, res) => {
 					followers: creator.details.analytics.followers,
 					totalViews: creator.details.analytics.totalViews,
 					averageViews: creator.details.analytics.averageViews,
-					engagement: creator.details.analytics.engagement,
 				},
 				reels: creator.details.reels,
-				tags: creator.details.tags,
 				media: creator.details.media || [],
 			},
 			createdAt: creator.createdAt,
@@ -79,10 +76,8 @@ router.get("/:id", async (req, res) => {
 					followers: creator.details.analytics.followers,
 					totalViews: creator.details.analytics.totalViews,
 					averageViews: creator.details.analytics.averageViews,
-					engagement: creator.details.analytics.engagement,
 				},
 				reels: creator.details.reels,
-				tags: creator.details.tags,
 				media: creator.details.media || [],
 			},
 			createdAt: creator.createdAt,
@@ -170,10 +165,8 @@ router.post("/", async (req, res) => {
 					followers: creator.details.analytics.followers,
 					totalViews: creator.details.analytics.totalViews,
 					averageViews: creator.details.analytics.averageViews,
-					engagement: creator.details.analytics.engagement,
 				},
 				reels: creator.details.reels,
-				tags: creator.details.tags,
 				media: creator.details.media || [],
 			},
 			createdAt: creator.createdAt,
@@ -275,10 +268,8 @@ router.put("/:id", async (req, res) => {
 					followers: creator.details.analytics.followers,
 					totalViews: creator.details.analytics.totalViews,
 					averageViews: creator.details.analytics.averageViews,
-					engagement: creator.details.analytics.engagement,
 				},
 				reels: creator.details.reels,
-				tags: creator.details.tags,
 				media: creator.details.media || [],
 			},
 			createdAt: creator.createdAt,
