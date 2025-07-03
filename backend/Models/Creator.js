@@ -68,6 +68,20 @@ const creatorSchema = new mongoose.Schema(
 			trim: true,
 			default: "Other",
 		},
+		phoneNumber: {
+			type: String,
+			trim: true,
+		},
+		mediaKit: {
+			type: String,
+			trim: true,
+			validate: {
+				validator: function(v) {
+					return !v || /^https?:\/\/.+/i.test(v);
+				},
+				message: "Media kit must be a valid URL"
+			}
+		},
 		details: {
 			bio: {
 				type: String,

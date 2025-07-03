@@ -26,6 +26,8 @@ router.get("/", async (req, res) => {
 			platform: creator.platform,
 			socialLink: creator.socialLink,
 			location: creator.location,
+			phoneNumber: creator.phoneNumber,
+			mediaKit: creator.mediaKit,
 			details: {
 				location: creator.details.location || creator.location,
 				bio: creator.details.bio,
@@ -67,6 +69,8 @@ router.get("/:id", async (req, res) => {
 			platform: creator.platform,
 			socialLink: creator.socialLink,
 			location: creator.location,
+			phoneNumber: creator.phoneNumber,
+			mediaKit: creator.mediaKit,
 			details: {
 				location: creator.details.location || creator.location,
 				bio: creator.details.bio,
@@ -138,6 +142,11 @@ router.post("/", async (req, res) => {
 			return res.status(400).json({ error: "Invalid socialLink URL" });
 		}
 
+		// Validate mediaKit URL if provided
+		if (req.body.mediaKit && !/^https?:\/\/.+/.test(req.body.mediaKit)) {
+			return res.status(400).json({ error: "Invalid mediaKit URL" });
+		}
+
 		// Remove unexpected fields like engagement
 		if (details?.analytics?.engagement) {
 			delete details.analytics.engagement;
@@ -155,6 +164,8 @@ router.post("/", async (req, res) => {
 			platform: creator.platform,
 			socialLink: creator.socialLink,
 			location: creator.location,
+			phoneNumber: creator.phoneNumber,
+			mediaKit: creator.mediaKit,
 			details: {
 				location: creator.details.location || creator.location,
 				bio: creator.details.bio,
@@ -234,6 +245,11 @@ router.put("/:id", async (req, res) => {
 			return res.status(400).json({ error: "Invalid socialLink URL" });
 		}
 
+		// Validate mediaKit URL if provided
+		if (req.body.mediaKit && !/^https?:\/\/.+/.test(req.body.mediaKit)) {
+			return res.status(400).json({ error: "Invalid mediaKit URL" });
+		}
+
 		// Remove unexpected fields like engagement
 		if (details?.analytics?.engagement) {
 			delete details.analytics.engagement;
@@ -257,6 +273,8 @@ router.put("/:id", async (req, res) => {
 			platform: creator.platform,
 			socialLink: creator.socialLink,
 			location: creator.location,
+			phoneNumber: creator.phoneNumber,
+			mediaKit: creator.mediaKit,
 			details: {
 				location: creator.details.location || creator.location,
 				bio: creator.details.bio,

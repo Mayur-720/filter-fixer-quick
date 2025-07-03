@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { CreateCreatorData } from "../../services/api";
 import { useCreators } from "../../hooks/useCreators";
@@ -40,6 +41,8 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 		platform: "",
 		socialLink: "",
 		location: "",
+		phoneNumber: "",
+		mediaKit: "",
 		bio: "",
 		followers: 0,
 		totalViews: 0,
@@ -60,6 +63,8 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 				platform: creator.platform || "",
 				socialLink: creator.socialLink || "",
 				location: creator.location || creator.details?.location || "",
+				phoneNumber: creator.phoneNumber || "",
+				mediaKit: creator.mediaKit || "",
 				bio: creator.details?.bio || "",
 				followers: creator.details?.analytics?.followers || 0,
 				totalViews: creator.details?.analytics?.totalViews || 0,
@@ -141,6 +146,13 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 			return;
 		}
 
+		// Validate mediaKit URL if provided
+		if (formData.mediaKit && !/^https?:\/\/.+/.test(formData.mediaKit)) {
+			setError("Please provide a valid URL for mediaKit");
+			setLoading(false);
+			return;
+		}
+
 		try {
 			// Construct payload matching CreateCreatorData
 			const payload: CreateCreatorData = {
@@ -150,6 +162,8 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 				platform: formData.platform,
 				socialLink: formData.socialLink,
 				location: formData.location || "Other",
+				phoneNumber: formData.phoneNumber,
+				mediaKit: formData.mediaKit,
 				bio: formData.bio,
 				followers: parseFloat(formData.followers.toString()) || 0,
 				totalViews: parseInt(formData.totalViews.toString()) || 0,
@@ -278,6 +292,28 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 										placeholder="https://instagram.com/username"
 										type="url"
 										required
+									/>
+								</div>
+
+								<div>
+									<Label htmlFor="phoneNumber">Phone Number</Label>
+									<Input
+										id="phoneNumber"
+										value={formData.phoneNumber}
+										onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+										placeholder="+1 234 567 8900"
+										type="tel"
+									/>
+								</div>
+
+								<div>
+									<Label htmlFor="mediaKit">Media Kit URL</Label>
+									<Input
+										id="mediaKit"
+										value={formData.mediaKit}
+										onChange={(e) => handleInputChange("mediaKit", e.target.value)}
+										placeholder="https://example.com/mediakit"
+										type="url"
 									/>
 								</div>
 
