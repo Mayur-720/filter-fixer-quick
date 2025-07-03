@@ -1,3 +1,4 @@
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { Creator } from "../types/Creator";
@@ -11,6 +12,7 @@ import {
 	Play,
 	Image as ImageIcon,
 	MessageCircle,
+	FileText,
 } from "lucide-react";
 import MediaViewer from "./MediaViewer";
 
@@ -40,10 +42,16 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 		}
 	};
 
+	const handleVisitMediaKit = () => {
+		if (creator.mediaKit) {
+			window.open(creator.mediaKit, "_blank");
+		}
+	};
+
 	return (
 		<>
 			<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40 p-4">
-				<div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+				<div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
 					{/* Header */}
 					<div className="relative">
 						<div className="h-48 bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400 rounded-t-2xl"></div>
@@ -62,6 +70,22 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 								className="w-32 h-32 rounded-full border-4 border-white object-cover"
 							/>
 						</div>
+
+						{/* Media Kit Button - Fixed in bottom right */}
+						{creator.mediaKit && (
+							<div className="fixed bottom-6 right-6 z-50">
+								<button
+									onClick={handleVisitMediaKit}
+									className="group bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+									title="Visit Media Kit"
+								>
+									<FileText size={18} />
+									<span className="hidden group-hover:inline-block transition-all duration-300">
+										Visit Media Kit
+									</span>
+								</button>
+							</div>
+						)}
 					</div>
 
 					{/* Content */}

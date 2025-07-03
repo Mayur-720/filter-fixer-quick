@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { CreateCreatorData } from "../../services/api";
 import { useCreators } from "../../hooks/useCreators";
@@ -116,46 +115,92 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 		}
 	};
 
-	const handleCSVImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+	const handleCSVImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0];
 		if (!file) return;
 
-		const reader = new FileReader();
-		reader.onload = (e) => {
-			const csv = e.target?.result as string;
-			const lines = csv.split('\n');
-			const headers = lines[0].split(',').map(h => h.trim());
-			
-			if (lines.length > 1) {
-				const data = lines[1].split(',').map(d => d.trim());
-				const csvData: any = {};
-				
-				headers.forEach((header, index) => {
-					csvData[header] = data[index] || '';
-				});
+		setLoading(true);
+		setError(null);
 
-				// Map CSV data to form data
-				setFormData(prev => ({
-					...prev,
-					name: csvData.name || prev.name,
-					genre: csvData.genre || prev.genre,
-					avatar: csvData.avatar || prev.avatar,
-					platform: csvData.platform || prev.platform,
-					socialLink: csvData.socialLink || prev.socialLink,
-					location: csvData.location || prev.location,
-					phoneNumber: csvData.phoneNumber || prev.phoneNumber,
-					mediaKit: csvData.mediaKit || prev.mediaKit,
-					bio: csvData.bio || prev.bio,
-					followers: parseInt(csvData.followers) || prev.followers,
-					totalViews: parseInt(csvData.totalViews) || prev.totalViews,
-					averageViews: parseInt(csvData.averageViews) || prev.averageViews,
-					engagement: csvData.engagement || prev.engagement,
-					reels: csvData.reels ? csvData.reels.split(';') : prev.reels,
-					tags: csvData.tags ? csvData.tags.split(';') : prev.tags,
-				}));
-			}
-		};
-		reader.readAsText(file);
+		try {
+			const reader = new FileReader();
+			reader.onload = async (e) => {
+				const csv = e.target?.result as string;
+				const lines = csv.split('\n').filter(line => line.trim());
+				
+				if (lines.length < 2) {
+					setError("CSV file must have at least a header row and one data row");
+					setLoading(false);
+					return;
+				}
+
+				const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+				let successCount = 0;
+				let errorCount = 0;
+				const errors: string[] = [];
+
+				// Process each data row (skip header)
+				for (let i = 1; i < lines.length; i++) {
+					const data = lines[i].split(',').map(d => d.trim());
+					
+					try {
+						const csvData: any = {};
+						headers.forEach((header, index) => {
+							csvData[header] = data[index] || '';
+						});
+
+						// Map CSV data to creator data
+						const creatorData: CreateCreatorData = {
+							name: csvData.name || '',
+							genre: csvData.genre || '',
+							avatar: csvData.avatar || '',
+							platform: csvData.platform || '',
+							socialLink: csvData.sociallink || csvData.social_link || '',
+							location: csvData.location || 'Other',
+							phoneNumber: csvData.phonenumber || csvData.phone_number || '',
+							mediaKit: csvData.mediakit || csvData.media_kit || '',
+							bio: csvData.bio || '',
+							followers: parseFloat(csvData.followers) || 0,
+							totalViews: parseInt(csvData.totalviews || csvData.total_views) || 0,
+							averageViews: parseInt(csvData.averageviews || csvData.average_views) || 0,
+							engagement: csvData.engagement || '',
+							reels: csvData.reels ? csvData.reels.split(';').map((r: string) => r.trim()) : [],
+							tags: csvData.tags ? csvData.tags.split(';').map((t: string) => t.trim()) : [],
+						};
+
+						// Validate required fields
+						if (!creatorData.name || !creatorData.genre || !creatorData.avatar || 
+							!creatorData.platform || !creatorData.socialLink || !creatorData.bio) {
+							errors.push(`Row ${i + 1}: Missing required fields`);
+							errorCount++;
+							continue;
+						}
+
+						await createCreator(creatorData);
+						successCount++;
+					} catch (error: any) {
+						console.error(`Error creating creator from row ${i + 1}:`, error);
+						errors.push(`Row ${i + 1}: ${error.message}`);
+						errorCount++;
+					}
+				}
+
+				if (successCount > 0) {
+					setError(null);
+					alert(`Successfully imported ${successCount} creators. ${errorCount > 0 ? `${errorCount} failed.` : ''}`);
+					if (errorCount === 0) {
+						onSuccess();
+					}
+				} else {
+					setError(`Failed to import any creators. Errors:\n${errors.join('\n')}`);
+				}
+			};
+			reader.readAsText(file);
+		} catch (error: any) {
+			setError(`CSV import failed: ${error.message}`);
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -212,6 +257,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 				bio: formData.bio,
 				followers: parseFloat(formData.followers.toString()) || 0,
 				totalViews: parseInt(formData.totalViews.toString()) || 0,
+				averageViews: parseInt(formData.averageViews.toString()) || 0,
 				engagement: formData.engagement,
 				reels: formData.reels || [],
 				tags: formData.tags || [],
@@ -256,7 +302,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 				<div className="flex gap-2">
 					<label className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg cursor-pointer transition-colors">
 						<Upload size={16} />
-						Import CSV
+						Import CSV (Multiple Creators)
 						<input
 							type="file"
 							accept=".csv"
@@ -268,7 +314,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 			</div>
 
 			{error && (
-				<div className="mb-4 p-4 bg-red-100 border border-red-300 text-red-700 rounded">
+				<div className="mb-4 p-4 bg-red-100 border border-red-300 text-red-700 rounded whitespace-pre-wrap">
 					{error}
 				</div>
 			)}

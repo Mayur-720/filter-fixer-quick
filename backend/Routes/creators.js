@@ -35,6 +35,7 @@ router.get("/", async (req, res) => {
 					followers: creator.details.analytics.followers,
 					totalViews: creator.details.analytics.totalViews,
 					averageViews: creator.details.analytics.averageViews,
+					engagement: creator.details.analytics.engagement,
 				},
 				reels: creator.details.reels,
 				tags: creator.details.tags,
@@ -78,6 +79,7 @@ router.get("/:id", async (req, res) => {
 					followers: creator.details.analytics.followers,
 					totalViews: creator.details.analytics.totalViews,
 					averageViews: creator.details.analytics.averageViews,
+					engagement: creator.details.analytics.engagement,
 				},
 				reels: creator.details.reels,
 				tags: creator.details.tags,
@@ -147,11 +149,6 @@ router.post("/", async (req, res) => {
 			return res.status(400).json({ error: "Invalid mediaKit URL" });
 		}
 
-		// Remove unexpected fields like engagement
-		if (details?.analytics?.engagement) {
-			delete details.analytics.engagement;
-		}
-
 		const creator = new Creator(req.body);
 		await creator.save();
 
@@ -173,6 +170,7 @@ router.post("/", async (req, res) => {
 					followers: creator.details.analytics.followers,
 					totalViews: creator.details.analytics.totalViews,
 					averageViews: creator.details.analytics.averageViews,
+					engagement: creator.details.analytics.engagement,
 				},
 				reels: creator.details.reels,
 				tags: creator.details.tags,
@@ -250,11 +248,6 @@ router.put("/:id", async (req, res) => {
 			return res.status(400).json({ error: "Invalid mediaKit URL" });
 		}
 
-		// Remove unexpected fields like engagement
-		if (details?.analytics?.engagement) {
-			delete details.analytics.engagement;
-		}
-
 		const creator = await Creator.findByIdAndUpdate(req.params.id, req.body, {
 			new: true,
 			runValidators: true,
@@ -282,6 +275,7 @@ router.put("/:id", async (req, res) => {
 					followers: creator.details.analytics.followers,
 					totalViews: creator.details.analytics.totalViews,
 					averageViews: creator.details.analytics.averageViews,
+					engagement: creator.details.analytics.engagement,
 				},
 				reels: creator.details.reels,
 				tags: creator.details.tags,
