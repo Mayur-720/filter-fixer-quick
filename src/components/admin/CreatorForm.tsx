@@ -19,6 +19,7 @@ import MediaManager from "./MediaManager";
 import { imageUploadAPI } from "../../services/imageUpload";
 import { mediaService } from "../../services/mediaAPI";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Upload } from "lucide-react";
 
 interface CreatorFormProps {
 	creator?: Creator | null;
@@ -34,7 +35,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 	const { createCreator, updateCreator } = useCreators();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [formData, setFormData] = useState<CreateCreatorData & { location: string }>({
+	const [formData, setFormData] = useState<CreateCreatorData & { location: string; averageViews: number }>({
 		name: "",
 		genre: "",
 		avatar: "",
@@ -49,6 +50,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 		engagement: "",
 		reels: [],
 		tags: [],
+		averageViews: 0,
 	});
 	const [currentPublicId, setCurrentPublicId] = useState<string | null>(null);
 	const [media, setMedia] = useState(creator?.details?.media || []);
@@ -68,6 +70,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 				bio: creator.details?.bio || "",
 				followers: creator.details?.analytics?.followers || 0,
 				totalViews: creator.details?.analytics?.totalViews || 0,
+				averageViews: creator.details?.analytics?.averageViews || 0,
 				engagement: creator.details?.analytics?.engagement || "",
 				reels: creator.details?.reels || [],
 				tags: creator.details?.tags || [],
@@ -111,6 +114,48 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 		} catch (error) {
 			console.error('Failed to delete media:', error);
 		}
+	};
+
+	const handleCSVImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const file = event.target.files?.[0];
+		if (!file) return;
+
+		const reader = new FileReader();
+		reader.onload = (e) => {
+			const csv = e.target?.result as string;
+			const lines = csv.split('\n');
+			const headers = lines[0].split(',').map(h => h.trim());
+			
+			if (lines.length > 1) {
+				const data = lines[1].split(',').map(d => d.trim());
+				const csvData: any = {};
+				
+				headers.forEach((header, index) => {
+					csvData[header] = data[index] || '';
+				});
+
+				// Map CSV data to form data
+				setFormData(prev => ({
+					...prev,
+					name: csvData.name || prev.name,
+					genre: csvData.genre || prev.genre,
+					avatar: csvData.avatar || prev.avatar,
+					platform: csvData.platform || prev.platform,
+					socialLink: csvData.socialLink || prev.socialLink,
+					location: csvData.location || prev.location,
+					phoneNumber: csvData.phoneNumber || prev.phoneNumber,
+					mediaKit: csvData.mediaKit || prev.mediaKit,
+					bio: csvData.bio || prev.bio,
+					followers: parseInt(csvData.followers) || prev.followers,
+					totalViews: parseInt(csvData.totalViews) || prev.totalViews,
+					averageViews: parseInt(csvData.averageViews) || prev.averageViews,
+					engagement: csvData.engagement || prev.engagement,
+					reels: csvData.reels ? csvData.reels.split(';') : prev.reels,
+					tags: csvData.tags ? csvData.tags.split(';') : prev.tags,
+				}));
+			}
+		};
+		reader.readAsText(file);
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -187,7 +232,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 	};
 
 	const handleInputChange = (
-		field: keyof (CreateCreatorData & { location: string }),
+		field: keyof (CreateCreatorData & { location: string; averageViews: number }),
 		value: unknown
 	) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
@@ -203,9 +248,24 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 
 	return (
 		<div className="p-6 max-w-6xl mx-auto">
-			<h2 className="text-2xl font-bold mb-6">
-				{creator ? "Edit Creator" : "Add New Creator"}
-			</h2>
+			<div className="flex justify-between items-center mb-6">
+				<h2 className="text-2xl font-bold">
+					{creator ? "Edit Creator" : "Add New Creator"}
+				</h2>
+				
+				<div className="flex gap-2">
+					<label className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg cursor-pointer transition-colors">
+						<Upload size={16} />
+						Import CSV
+						<input
+							type="file"
+							accept=".csv"
+							onChange={handleCSVImport}
+							className="hidden"
+						/>
+					</label>
+				</div>
+			</div>
 
 			{error && (
 				<div className="mb-4 p-4 bg-red-100 border border-red-300 text-red-700 rounded">
@@ -301,7 +361,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 										id="phoneNumber"
 										value={formData.phoneNumber}
 										onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
-										placeholder="+1 234 567 8900"
+										placeholder="+1234567890"
 										type="tel"
 									/>
 								</div>
@@ -373,6 +433,20 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 										placeholder="e.g., 50000"
 										min="0"
 										required
+									/>
+								</div>
+
+								<div>
+									<Label htmlFor="averageViews">Average Views</Label>
+									<Input
+										id="averageViews"
+										type="number"
+										value={formData.averageViews}
+										onChange={(e) =>
+											handleInputChange("averageViews", parseInt(e.target.value) || 0)
+										}
+										placeholder="e.g., 5000"
+										min="0"
 									/>
 								</div>
 

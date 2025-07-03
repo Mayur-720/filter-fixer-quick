@@ -29,10 +29,15 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 	};
 
 	const handleContactCreator = () => {
-		// Open WhatsApp or email based on availability
-		const message = `Hi ${creator.name}, I'm interested in collaborating with you!`;
-		const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-		window.open(whatsappUrl, "_blank");
+		if (creator.phoneNumber) {
+			// Remove any non-digit characters and format for WhatsApp
+			const cleanPhone = creator.phoneNumber.replace(/\D/g, '');
+			const message = `Hi ${creator.name}, I'm interested in collaborating with you!`;
+			const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+			window.open(whatsappUrl, "_blank");
+		} else {
+			alert("Phone number not available for this creator");
+		}
 	};
 
 	return (
@@ -79,13 +84,15 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 							</div>
 
 							<div className="flex gap-3">
-								<button
-									onClick={handleContactCreator}
-									className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105"
-								>
-									<MessageCircle size={16} />
-									<span>Contact Creator</span>
-								</button>
+								{creator.phoneNumber && (
+									<button
+										onClick={handleContactCreator}
+										className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+									>
+										<MessageCircle size={16} />
+										<span>Contact Creator</span>
+									</button>
+								)}
 
 								<a
 									href={creator.socialLink}
