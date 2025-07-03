@@ -5,7 +5,6 @@ import {
 	Linkedin,
 	Twitter,
 	Youtube,
-	ExternalLink,
 	MapPin,
 	Users,
 	Eye,
@@ -45,7 +44,7 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 		<div className="group relative">
 			<button
 				onClick={onClick}
-				className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 w-full text-left border border-gray-100 hover:border-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-300 relative overflow-hidden group-hover:scale-[1.02] transform"
+				className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 w-full text-left border border-gray-100 hover:border-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-300 relative overflow-hidden group-hover:scale-[1.02]"
 				aria-label={`View profile of ${creator.name}, ${
 					creator.details?.analytics.followers || 0
 				}K followers on ${creator.platform || "unknown platform"}`}
@@ -54,7 +53,7 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 				<div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
 
 				{/* Avatar Section */}
-				<div className="relative h-52 overflow-hidden rounded-t-xl bg-gradient-to-br from-purple-100 to-pink-100">
+				<div className="relative h-48 overflow-hidden rounded-t-xl bg-gradient-to-br from-purple-100 to-pink-100">
 					<img
 						src={creator.avatar || "/fallback-avatar.png"}
 						alt={`${creator.name}'s avatar`}
@@ -66,8 +65,8 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 					/>
 
 					{/* Overlay with stats - appears on hover */}
-					<div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-4">
-						<div className="text-white space-y-1 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+					<div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-4">
+						<div className="text-white space-y-1.5">
 							<div className="flex items-center gap-2 text-sm">
 								<Users size={14} />
 								<span>
@@ -80,35 +79,42 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 									{formatNumber(creator.details?.analytics.totalViews || 0)}
 								</span>
 							</div>
+							{/* {creator.details?.analytics.averageViews && (
+								<div className="flex items-center gap-2 text-sm">
+									<Eye size={14} />
+									<span>
+										Avg: {formatNumber(creator.details.analytics.averageViews)}
+									</span>
+								</div>
+							)} */}
 						</div>
 					</div>
 
 					{/* Platform Badge */}
-					<div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-90 group-hover:scale-100">
-						{renderPlatformIcon()}
+					<div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full p-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-90 group-hover:scale-100">
+						{renderPlatformIcon(16)}
 					</div>
 				</div>
 
 				{/* Content Section */}
-				<div className="p-4 flex justify-between items-start gap-4">
-					<div>
-						<h3 className="text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors duration-300 truncate">
-							{creator.name}
-						</h3>
-
-						<div className="flex items-center gap-2 text-sm text-gray-500">
-							<MapPin size={12} />
-							<span className="truncate">{creator.location}</span>
+				<div className="p-4 flex flex-col gap-3">
+					<div className="flex items-center justify-between">
+						<div>
+							<h3 className="text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors duration-300 truncate">
+								{creator.name}
+							</h3>
+							<div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
+								<MapPin size={12} />
+								<span className="truncate">{creator.location}</span>
+							</div>
 						</div>
-					</div>
-					<div className="flex items-center justify-end pt-2 border-t border-gray-100">
 						<a
 							href={
 								creator.socialLink || "https://www.instagram.com/saarvendra/"
 							}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="flex items-center gap-2 border-2 hover:from-purple-600 hover:to-pink-600  px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md"
+							className="flex items-center gap-1.5 bg-gray-100 hover:bg-purple-100 text-gray-700 hover:text-purple-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-sm"
 							aria-label={`Visit ${creator.name}'s ${
 								creator.platform || "Instagram"
 							} profile`}
@@ -118,8 +124,6 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 							<span>Visit</span>
 						</a>
 					</div>
-
-					{/* Action Section */}
 				</div>
 
 				{/* Shimmer effect on hover */}

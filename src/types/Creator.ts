@@ -1,4 +1,4 @@
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface Creator {
 	_id?: string;
 	name: string;
@@ -9,6 +9,7 @@ export interface Creator {
 	socialLink: string;
 	location?: string;
 	details: {
+		pricing: any;
 		location: string;
 		bio: string;
 		analytics: {
@@ -19,7 +20,17 @@ export interface Creator {
 		};
 		reels: string[];
 		tags: string[];
+		media?: MediaFile[];
 	};
 	createdAt?: string;
 	updatedAt?: string;
+}
+
+export interface MediaFile {
+	id: string;
+	type: "image" | "video";
+	url: string;
+	thumbnail?: string;
+	caption?: string;
+	createdAt: string;
 }

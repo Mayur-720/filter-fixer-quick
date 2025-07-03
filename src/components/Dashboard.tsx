@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import CreatorCard from "./CreatorCard";
@@ -7,6 +8,8 @@ import { mockCreators } from "../data/mockData";
 import { Loader2, Search, Filter } from "lucide-react";
 import { Input } from "./ui/input";
 import FilterDialog from "./FilterDialog";
+import WhatsAppButton from "./WhatsAppButton";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DashboardProps {
 	activeGenre: string;
@@ -26,6 +29,8 @@ const Dashboard: React.FC<DashboardProps> = ({
 }) => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
+	const isMobile = useIsMobile();
+
 	const [filters, setFilters] = useState<FilterState>({
 		platform: "All",
 		locations: [],
@@ -54,11 +59,9 @@ const Dashboard: React.FC<DashboardProps> = ({
 		return allCreators.filter((creator) => {
 			// Genre filter
 			if (activeGenre !== "All Creators") {
-				const creatorTags = creator.details?.tags || [];
-				const genreMatch = creatorTags.some((tag) =>
-					tag.toLowerCase().includes(activeGenre.toLowerCase())
-				);
-				if (!genreMatch) return false;
+				const creatorGenre = creator.genre?.toLowerCase().trim() || "";
+				const activeGenreNormalized = activeGenre.toLowerCase().trim();
+				if (creatorGenre !== activeGenreNormalized) return false;
 			}
 
 			// Search filter
@@ -120,9 +123,9 @@ const Dashboard: React.FC<DashboardProps> = ({
 
 	if (isLoading) {
 		return (
-			<div className="flex items-center justify-center h-64">
-				<Loader2 className="h-8 w-8 animate-spin text-purple-600" />
-				<span className="ml-2 text-gray-600">Loading creators...</span>
+			<div className="flex flex-col items-center justify-center h-full space-y-4">
+				<div className="loader" />
+				<p className="text-sm text-gray-600">Loading creators...</p>
 			</div>
 		);
 	}
@@ -135,29 +138,29 @@ const Dashboard: React.FC<DashboardProps> = ({
 		<div className="flex-1 overflow-auto">
 			<div className="max-w-full mx-auto px-3 sm:px-4 lg:px-6 py-3">
 				{/* Header */}
-				<div className="mb-3">
+				<div className="mb-4">
 					<h1 className="text-xl font-bold text-gray-900 mb-1">
 						{activeGenre}
 					</h1>
-					<p className="text-gray-600 text-sm">
+					<p className="text-gray-600 text-xs lg:text-base">
 						Discover amazing content creators and collaborate with them
 					</p>
 				</div>
 
 				{/* Search and Filter Bar */}
-				<div className="mb-3 flex flex-col sm:flex-row gap-2">
+				<div className="mb-4 flex flex-col sm:flex-row gap-2">
 					<div className="relative flex-1">
 						<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
 						<Input
 							placeholder="Search creators by name or tags..."
 							value={searchTerm}
 							onChange={(e) => setSearchTerm(e.target.value)}
-							className="pl-9 pr-4 py-2 w-full h-8"
+							className="pl-9 pr-4 py-2 w-full h-9"
 						/>
 					</div>
 					<button
 						onClick={() => setIsFilterOpen(true)}
-						className={`flex items-center gap-2 px-3 py-2 rounded-md border transition-colors text-sm ${
+						className={`flex items-center gap-2 px-3 py-1.5 rounded-md border transition-colors text-sm ${
 							hasActiveFilters
 								? "bg-purple-100 border-purple-300 text-purple-700"
 								: "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -181,7 +184,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 				</div>
 
 				{/* Results count */}
-				<div className="mb-2">
+				<div className="mb-4">
 					<p className="text-xs text-gray-600">
 						{filteredCreators.length} creator
 						{filteredCreators.length !== 1 ? "s" : ""} found
@@ -191,7 +194,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 
 				{/* Content */}
 				<div className="flex-1 overflow-y-auto">
-					<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+					<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
 						{filteredCreators.map((creator) => (
 							<CreatorCard
 								key={creator._id || creator.name}
@@ -201,7 +204,6 @@ const Dashboard: React.FC<DashboardProps> = ({
 						))}
 					</div>
 
-					{/* No results */}
 					{filteredCreators.length === 0 && (
 						<div className="text-center py-8">
 							<div className="text-gray-400 mb-3">
@@ -234,6 +236,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 					onClearFilters={handleClearFilters}
 				/>
 			</div>
+			{isMobile && <WhatsAppButton variant="floating" />}
 		</div>
 	);
 };
