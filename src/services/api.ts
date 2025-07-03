@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import { Creator } from "../types/Creator";
 
@@ -55,7 +54,6 @@ export interface CreateCreatorData {
 	totalViews: number;
 	averageViews?: number;
 	reels: string[];
-	tags: string[];
 }
 
 export type UpdateCreatorData = Partial<CreateCreatorData>;
@@ -93,7 +91,6 @@ export const creatorAPI = {
 					averageViews: data.averageViews,
 				},
 				reels: data.reels,
-				tags: data.tags,
 			},
 		};
 		const response = await api.post("/creators", creatorData);
@@ -115,7 +112,8 @@ export const creatorAPI = {
 		if (data.platform) updateData.platform = data.platform;
 		if (data.socialLink) updateData.socialLink = data.socialLink;
 		if (data.location) updateData.location = data.location;
-		if (data.phoneNumber !== undefined) updateData.phoneNumber = data.phoneNumber;
+		if (data.phoneNumber !== undefined)
+			updateData.phoneNumber = data.phoneNumber;
 		if (data.mediaKit !== undefined) updateData.mediaKit = data.mediaKit;
 
 		if (
@@ -123,8 +121,7 @@ export const creatorAPI = {
 			data.followers ||
 			data.totalViews ||
 			data.averageViews ||
-			data.reels ||
-			data.tags
+			data.reels
 		) {
 			updateData.details = {};
 			if (data.bio) updateData.details.bio = data.bio;
@@ -139,8 +136,7 @@ export const creatorAPI = {
 					updateData.details.analytics.averageViews = data.averageViews;
 			}
 			if (data.reels) updateData.details.reels = data.reels;
-			if (data.tags) updateData.details.tags = data.tags;
-			
+
 			// Always preserve existing media
 			updateData.details.media = existingMedia;
 		}

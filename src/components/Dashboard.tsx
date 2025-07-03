@@ -68,10 +68,8 @@ const Dashboard: React.FC<DashboardProps> = ({
 			if (searchTerm.trim()) {
 				const searchLower = searchTerm.toLowerCase();
 				const nameMatch = creator.name.toLowerCase().includes(searchLower);
-				const tagsMatch = creator.details?.tags?.some((tag) =>
-					tag.toLowerCase().includes(searchLower)
-				);
-				if (!nameMatch && !tagsMatch) return false;
+
+				if (!nameMatch) return false;
 			}
 
 			// Platform filter

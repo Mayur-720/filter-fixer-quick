@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
 import { CreateCreatorData } from "../../services/api";
 import { useCreators } from "../../hooks/useCreators";
@@ -34,7 +35,9 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 	const { createCreator, updateCreator } = useCreators();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [formData, setFormData] = useState<CreateCreatorData & { location: string; averageViews: number }>({
+	const [formData, setFormData] = useState<
+		CreateCreatorData & { location: string; averageViews: number }
+	>({
 		name: "",
 		genre: "",
 		avatar: "",
@@ -47,7 +50,6 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 		followers: 0,
 		totalViews: 0,
 		reels: [],
-		tags: [],
 		averageViews: 0,
 	});
 	const [currentPublicId, setCurrentPublicId] = useState<string | null>(null);
@@ -70,50 +72,51 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 				totalViews: creator.details?.analytics?.totalViews || 0,
 				averageViews: creator.details?.analytics?.averageViews || 0,
 				reels: creator.details?.reels || [],
-				tags: [],
 			});
 		}
 	}, [creator]);
 
 	const handleImageUpload = (imageUrl: string) => {
-		setFormData(prev => ({ ...prev, avatar: imageUrl }));
+		setFormData((prev) => ({ ...prev, avatar: imageUrl }));
 	};
 
 	const handleImageDelete = async () => {
 		if (currentPublicId) {
 			try {
 				await imageUploadAPI.deleteImage(currentPublicId);
-				setFormData(prev => ({ ...prev, avatar: "" }));
+				setFormData((prev) => ({ ...prev, avatar: "" }));
 				setCurrentPublicId(null);
 			} catch (error) {
-				console.error('Failed to delete image:', error);
+				console.error("Failed to delete image:", error);
 			}
 		}
 	};
 
 	const handleMediaAdd = async (file: File, caption: string) => {
 		if (!creator?._id) return;
-		
+
 		try {
 			const newMedia = await mediaService.addMedia(creator._id, file, caption);
-			setMedia(prev => [...prev, newMedia]);
+			setMedia((prev) => [...prev, newMedia]);
 		} catch (error) {
-			console.error('Failed to add media:', error);
+			console.error("Failed to add media:", error);
 		}
 	};
 
 	const handleMediaDelete = async (mediaId: string) => {
 		if (!creator?._id) return;
-		
+
 		try {
 			await mediaService.deleteMedia(creator._id, mediaId);
-			setMedia(prev => prev.filter(item => item.id !== mediaId));
+			setMedia((prev) => prev.filter((item) => item.id !== mediaId));
 		} catch (error) {
-			console.error('Failed to delete media:', error);
+			console.error("Failed to delete media:", error);
 		}
 	};
 
-	const handleCSVImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+	const handleCSVImport = async (
+		event: React.ChangeEvent<HTMLInputElement>
+	) => {
 		const file = event.target.files?.[0];
 		if (!file) return;
 
@@ -124,51 +127,148 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 			const reader = new FileReader();
 			reader.onload = async (e) => {
 				const csv = e.target?.result as string;
-				const lines = csv.split('\n').filter(line => line.trim());
-				
+				const lines = csv.split("\n").filter((line) => line.trim());
+
 				if (lines.length < 2) {
 					setError("CSV file must have at least a header row and one data row");
 					setLoading(false);
 					return;
 				}
 
-				const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+				const headers = lines[0].split(",").map((h) => h.trim().toLowerCase());
 				let successCount = 0;
 				let errorCount = 0;
 				const errors: string[] = [];
 
 				// Process each data row (skip header)
 				for (let i = 1; i < lines.length; i++) {
-					const data = lines[i].split(',').map(d => d.trim());
-					
+					const data = lines[i].split(",").map((d) => d.trim());
+
 					try {
 						const csvData: any = {};
 						headers.forEach((header, index) => {
-							csvData[header] = data[index] || '';
+							csvData[header] = data[index] || "";
 						});
 
-						// Map CSV data to creator data
+						// Enhanced mapping to use as much CSV data as possible
 						const creatorData: CreateCreatorData = {
-							name: csvData.name || '',
-							genre: csvData.genre || '',
-							avatar: csvData.avatar || '',
-							platform: csvData.platform || '',
-							socialLink: csvData.sociallink || csvData.social_link || '',
-							location: csvData.location || 'Other',
-							phoneNumber: csvData.phonenumber || csvData.phone_number || '',
-							mediaKit: csvData.mediakit || csvData.media_kit || '',
-							bio: csvData.bio || '',
-							followers: parseFloat(csvData.followers) || 0,
-							totalViews: parseInt(csvData.totalviews || csvData.total_views) || 0,
-							averageViews: parseInt(csvData.averageviews || csvData.average_views) || 0,
-							reels: csvData.reels ? csvData.reels.split(';').map((r: string) => r.trim()) : [],
-							tags: [],
+							name:
+								csvData.name || csvData.creator_name || csvData.full_name || "",
+							genre: csvData.genre || csvData.category || csvData.niche || "",
+							avatar:
+								csvData.avatar ||
+								csvData.profile_pic ||
+								csvData.image ||
+								csvData.photo ||
+								"",
+							platform:
+								csvData.platform ||
+								csvData.social_platform ||
+								csvData.channel ||
+								"",
+							socialLink:
+								csvData.sociallink ||
+								csvData.social_link ||
+								csvData.profile_url ||
+								csvData.url ||
+								"",
+							location:
+								csvData.location ||
+								csvData.country ||
+								csvData.city ||
+								csvData.region ||
+								"Other",
+							phoneNumber:
+								csvData.phonenumber ||
+								csvData.phone_number ||
+								csvData.phone ||
+								csvData.contact ||
+								"",
+							mediaKit:
+								csvData.mediakit ||
+								csvData.media_kit ||
+								csvData.presskit ||
+								csvData.portfolio ||
+								"",
+							bio:
+								csvData.bio ||
+								csvData.description ||
+								csvData.about ||
+								csvData.summary ||
+								"",
+							followers:
+								parseFloat(
+									csvData.followers ||
+										csvData.subscriber_count ||
+										csvData.audience ||
+										csvData.fans ||
+										"0"
+								) || 0,
+							totalViews:
+								parseInt(
+									csvData.totalviews ||
+										csvData.total_views ||
+										csvData.views ||
+										csvData.total_reach ||
+										"0"
+								) || 0,
+							averageViews:
+								parseInt(
+									csvData.averageviews ||
+										csvData.average_views ||
+										csvData.avg_views ||
+										csvData.typical_views ||
+										"0"
+								) || 0,
+							reels: csvData.reels
+								? csvData.reels
+										.split(";")
+										.map((r: string) => r.trim())
+										.filter(Boolean)
+								: csvData.videos
+								? csvData.videos
+										.split(";")
+										.map((r: string) => r.trim())
+										.filter(Boolean)
+								: csvData.content
+								? csvData.content
+										.split(";")
+										.map((r: string) => r.trim())
+										.filter(Boolean)
+								: [],
 						};
 
-						// Validate required fields
-						if (!creatorData.name || !creatorData.genre || !creatorData.avatar || 
-							!creatorData.platform || !creatorData.socialLink || !creatorData.bio) {
-							errors.push(`Row ${i + 1}: Missing required fields`);
+						// Validate required fields with better error messages
+						const missingFields = [];
+						if (!creatorData.name) missingFields.push("name");
+						if (!creatorData.genre) missingFields.push("genre");
+						if (!creatorData.avatar) missingFields.push("avatar");
+						if (!creatorData.platform) missingFields.push("platform");
+						if (!creatorData.socialLink) missingFields.push("socialLink");
+						if (!creatorData.bio) missingFields.push("bio");
+
+						if (missingFields.length > 0) {
+							errors.push(
+								`Row ${i + 1}: Missing required fields: ${missingFields.join(
+									", "
+								)}`
+							);
+							errorCount++;
+							continue;
+						}
+
+						// Validate URLs
+						if (!/^https?:\/\/.+/.test(creatorData.socialLink)) {
+							errors.push(`Row ${i + 1}: Invalid social link URL`);
+							errorCount++;
+							continue;
+						}
+
+						if (
+							creatorData.mediaKit &&
+							!/^https?:\/\/.+/.test(creatorData.mediaKit)
+						) {
+							errors.push(`Row ${i + 1}: Invalid media kit URL`);
 							errorCount++;
 							continue;
 						}
@@ -184,12 +284,23 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 
 				if (successCount > 0) {
 					setError(null);
-					alert(`Successfully imported ${successCount} creators. ${errorCount > 0 ? `${errorCount} failed.` : ''}`);
+					const message = `Successfully imported ${successCount} creators.${
+						errorCount > 0 ? ` ${errorCount} failed.` : ""
+					}`;
+					alert(message);
 					if (errorCount === 0) {
 						onSuccess();
+					} else {
+						// Show first few errors for debugging
+						const errorSummary = errors.slice(0, 5).join("\n");
+						console.log("Import errors:", errorSummary);
 					}
 				} else {
-					setError(`Failed to import any creators. Errors:\n${errors.join('\n')}`);
+					setError(
+						`Failed to import any creators. Errors:\n${errors
+							.slice(0, 10)
+							.join("\n")}`
+					);
 				}
 			};
 			reader.readAsText(file);
@@ -256,7 +367,6 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 				totalViews: parseInt(formData.totalViews.toString()) || 0,
 				averageViews: parseInt(formData.averageViews.toString()) || 0,
 				reels: formData.reels || [],
-				tags: [],
 			};
 
 			if (creator) {
@@ -274,7 +384,10 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 	};
 
 	const handleInputChange = (
-		field: keyof (CreateCreatorData & { location: string; averageViews: number }),
+		field: keyof (CreateCreatorData & {
+			location: string;
+			averageViews: number;
+		}),
 		value: unknown
 	) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
@@ -294,7 +407,7 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 				<h2 className="text-2xl font-bold">
 					{creator ? "Edit Creator" : "Add New Creator"}
 				</h2>
-				
+
 				<div className="flex gap-2">
 					<label className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg cursor-pointer transition-colors">
 						<Upload size={16} />
@@ -318,7 +431,9 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 			<Tabs defaultValue="basic" className="w-full">
 				<TabsList className="grid w-full grid-cols-2">
 					<TabsTrigger value="basic">Basic Information</TabsTrigger>
-					<TabsTrigger value="media" disabled={!creator}>Media Gallery</TabsTrigger>
+					<TabsTrigger value="media" disabled={!creator}>
+						Media Gallery
+					</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value="basic" className="space-y-6">
@@ -348,7 +463,9 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 										</SelectTrigger>
 										<SelectContent>
 											<SelectItem value="AI Creators">AI Creators</SelectItem>
-											<SelectItem value="Video Editing">Video Editing</SelectItem>
+											<SelectItem value="Video Editing">
+												Video Editing
+											</SelectItem>
 											<SelectItem value="Tech Product">Tech Product</SelectItem>
 											<SelectItem value="Lifestyle">Lifestyle</SelectItem>
 											<SelectItem value="Business">Business</SelectItem>
@@ -370,7 +487,9 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 									<Label htmlFor="platform">Platform *</Label>
 									<Select
 										value={formData.platform}
-										onValueChange={(value) => handleInputChange("platform", value)}
+										onValueChange={(value) =>
+											handleInputChange("platform", value)
+										}
 									>
 										<SelectTrigger>
 											<SelectValue placeholder="Select a platform" />
@@ -390,7 +509,9 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 									<Input
 										id="socialLink"
 										value={formData.socialLink}
-										onChange={(e) => handleInputChange("socialLink", e.target.value)}
+										onChange={(e) =>
+											handleInputChange("socialLink", e.target.value)
+										}
 										placeholder="https://instagram.com/username"
 										type="url"
 										required
@@ -402,7 +523,9 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 									<Input
 										id="phoneNumber"
 										value={formData.phoneNumber}
-										onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+										onChange={(e) =>
+											handleInputChange("phoneNumber", e.target.value)
+										}
 										placeholder="+1234567890"
 										type="tel"
 									/>
@@ -413,7 +536,9 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 									<Input
 										id="mediaKit"
 										value={formData.mediaKit}
-										onChange={(e) => handleInputChange("mediaKit", e.target.value)}
+										onChange={(e) =>
+											handleInputChange("mediaKit", e.target.value)
+										}
 										placeholder="https://example.com/mediakit"
 										type="url"
 									/>
@@ -423,7 +548,9 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 									<Label htmlFor="location">Location</Label>
 									<Select
 										value={formData.location}
-										onValueChange={(value) => handleInputChange("location", value)}
+										onValueChange={(value) =>
+											handleInputChange("location", value)
+										}
 									>
 										<SelectTrigger>
 											<SelectValue placeholder="Select location" />
@@ -455,7 +582,10 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 										step="0.1"
 										value={formData.followers}
 										onChange={(e) =>
-											handleInputChange("followers", parseFloat(e.target.value) || 0)
+											handleInputChange(
+												"followers",
+												parseFloat(e.target.value) || 0
+											)
 										}
 										placeholder="e.g., 1000.5"
 										min="0"
@@ -470,7 +600,10 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 										type="number"
 										value={formData.totalViews}
 										onChange={(e) =>
-											handleInputChange("totalViews", parseInt(e.target.value) || 0)
+											handleInputChange(
+												"totalViews",
+												parseInt(e.target.value) || 0
+											)
 										}
 										placeholder="e.g., 50000"
 										min="0"
@@ -485,7 +618,10 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 										type="number"
 										value={formData.averageViews}
 										onChange={(e) =>
-											handleInputChange("averageViews", parseInt(e.target.value) || 0)
+											handleInputChange(
+												"averageViews",
+												parseInt(e.target.value) || 0
+											)
 										}
 										placeholder="e.g., 5000"
 										min="0"
@@ -505,18 +641,6 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 								placeholder="Creator biography..."
 								required
 								className="min-h-[100px]"
-							/>
-						</div>
-
-						<div>
-							<Label htmlFor="reels">Reel URLs (comma-separated)</Label>
-							<Textarea
-								id="reels"
-								value={formData.reels.join(", ")}
-								onChange={(e) => handleArrayChange("reels", e.target.value)}
-								rows={3}
-								placeholder="https://example.com/reel1, https://example.com/reel2"
-								className="min-h-[80px]"
 							/>
 						</div>
 

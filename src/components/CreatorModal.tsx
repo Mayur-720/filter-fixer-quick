@@ -1,4 +1,3 @@
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { Creator } from "../types/Creator";
@@ -33,9 +32,11 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 	const handleContactCreator = () => {
 		if (creator.phoneNumber) {
 			// Remove any non-digit characters and format for WhatsApp
-			const cleanPhone = creator.phoneNumber.replace(/\D/g, '');
+			const cleanPhone = creator.phoneNumber.replace(/\D/g, "");
 			const message = `Hi ${creator.name}, I'm interested in collaborating with you!`;
-			const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+			const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
+				message
+			)}`;
 			window.open(whatsappUrl, "_blank");
 		} else {
 			alert("Phone number not available for this creator");
@@ -207,14 +208,14 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 
 						{/* Media Kit Button - Inside dialog at bottom right */}
 						{creator.mediaKit && (
-							<div className="absolute bottom-6 right-6">
+							<div className="fixed bottom-6 right-6 z-50">
 								<button
 									onClick={handleVisitMediaKit}
 									className="group bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
 									title="Visit Media Kit"
 								>
 									<FileText size={18} />
-									<span className="hidden group-hover:inline-block transition-all duration-300">
+									<span className="hidden group-hover:inline-block transition-all duration-300 whitespace-nowrap">
 										Visit Media Kit
 									</span>
 								</button>
