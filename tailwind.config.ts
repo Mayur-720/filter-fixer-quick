@@ -74,6 +74,7 @@ export default {
 			},
 			fontFamily: {
 				'quinn': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+				'anton': ['Anton', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
