@@ -1,3 +1,4 @@
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -14,6 +15,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 interface DashboardProps {
 	activeGenre: string;
 	onCreatorClick: (creator: Creator) => void;
+	isModalOpen?: boolean;
 }
 
 interface FilterState {
@@ -26,6 +28,7 @@ interface FilterState {
 const Dashboard: React.FC<DashboardProps> = ({
 	activeGenre,
 	onCreatorClick,
+	isModalOpen = false,
 }) => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -234,7 +237,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 					onClearFilters={handleClearFilters}
 				/>
 			</div>
-			{isMobile && <WhatsAppButton variant="floating" />}
+			{isMobile && <WhatsAppButton variant="floating" hidden={isModalOpen} />}
 		</div>
 	);
 };

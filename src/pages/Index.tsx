@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Dashboard from "../components/Dashboard";
@@ -104,6 +105,7 @@ const Index = () => {
 					<Dashboard
 						activeGenre={activeGenre}
 						onCreatorClick={setSelectedCreator}
+						isModalOpen={!!selectedCreator}
 					/>
 				</div>
 			</div>

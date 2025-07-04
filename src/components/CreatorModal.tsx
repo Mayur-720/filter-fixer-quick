@@ -1,3 +1,4 @@
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { Creator } from "../types/Creator";
@@ -51,7 +52,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 
 	return (
 		<>
-			<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40 p-4">
+			<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
 				<div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
 					{/* Header */}
 					<div className="relative">
@@ -206,9 +207,9 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 							</div>
 						)}
 
-						{/* Media Kit Button - Inside dialog at bottom right */}
+						{/* Media Kit Button - Positioned to avoid conflict with WhatsApp button */}
 						{creator.mediaKit && (
-							<div className="fixed bottom-6 right-6 z-50">
+							<div className="fixed bottom-20 md:bottom-6 right-6 z-50">
 								<button
 									onClick={handleVisitMediaKit}
 									className="group bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
