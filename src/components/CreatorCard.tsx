@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Creator } from "../types/Creator";
 import {
@@ -107,7 +106,7 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 							}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="flex items-center justify-center gap-1 sm:gap-1.5 bg-gray-100 hover:bg-brand-aureolin/20 text-gray-700 hover:text-brand-purple px-2.5 py-1.5 sm:px-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-sm self-start sm:self-auto font-quinn"
+							className="flex items-center justify-center gap-1 sm:gap-1.5 bg-gray-100 hover:bg-brand-aureolin/20 text-gray-700 hover:text-brand-purple px-2.5 py-1.5 sm:px-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-sm self-end sm:self-auto font-quinn"
 							aria-label={`Visit ${creator.name}'s ${
 								creator.platform || "Instagram"
 							} profile`}

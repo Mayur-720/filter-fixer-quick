@@ -1,4 +1,3 @@
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { Creator } from "../types/Creator";
@@ -209,14 +208,14 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 
 						{/* Media Kit Button - Positioned to avoid conflict with WhatsApp button */}
 						{creator.mediaKit && (
-							<div className="fixed bottom-20 md:bottom-6 right-6 z-50">
+							<div className="fixed bottom-10 md:bottom-6 right-6 z-50">
 								<button
 									onClick={handleVisitMediaKit}
 									className="group bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
 									title="Visit Media Kit"
 								>
 									<FileText size={18} />
-									<span className="hidden group-hover:inline-block transition-all duration-300 whitespace-nowrap">
+									<span className="hidden lg:inline group-hover:inline-block transition-all duration-300 whitespace-nowrap">
 										Visit Media Kit
 									</span>
 								</button>
