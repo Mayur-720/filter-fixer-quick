@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Creator } from "../types/Creator";
 import {
@@ -79,14 +80,6 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 									{formatNumber(creator.details?.analytics.totalViews || 0)}
 								</span>
 							</div>
-							{/* {creator.details?.analytics.averageViews && (
-								<div className="flex items-center gap-2 text-sm">
-									<Eye size={14} />
-									<span>
-										Avg: {formatNumber(creator.details.analytics.averageViews)}
-									</span>
-								</div>
-							)} */}
 						</div>
 					</div>
 
@@ -96,15 +89,15 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 					</div>
 				</div>
 
-				{/* Content Section */}
-				<div className="p-4 flex flex-col gap-3">
-					<div className="flex items-center justify-between">
-						<div>
-							<h3 className="text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors duration-300 truncate">
+				{/* Content Section - Improved mobile layout */}
+				<div className="p-3 sm:p-4 flex flex-col gap-2.5 sm:gap-3">
+					<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
+						<div className="flex-1 min-w-0">
+							<h3 className="text-base sm:text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors duration-300 truncate">
 								{creator.name}
 							</h3>
-							<div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
-								<MapPin size={12} />
+							<div className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-500 mt-0.5 sm:mt-1">
+								<MapPin size={10} className="sm:w-3 sm:h-3 flex-shrink-0" />
 								<span className="truncate">{creator.location}</span>
 							</div>
 						</div>
@@ -114,14 +107,14 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 							}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="flex items-center gap-1.5 bg-gray-100 hover:bg-purple-100 text-gray-700 hover:text-purple-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-sm"
+							className="flex items-center justify-center gap-1 sm:gap-1.5 bg-gray-100 hover:bg-purple-100 text-gray-700 hover:text-purple-600 px-2.5 py-1.5 sm:px-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-sm self-start sm:self-auto"
 							aria-label={`Visit ${creator.name}'s ${
 								creator.platform || "Instagram"
 							} profile`}
 							onClick={(e) => e.stopPropagation()}
 						>
-							{renderPlatformIcon(12)}
-							<span>Visit</span>
+							{renderPlatformIcon(10)}
+							<span className="sm:inline">Visit</span>
 						</a>
 					</div>
 				</div>
