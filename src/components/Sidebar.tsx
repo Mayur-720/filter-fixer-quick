@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
 	Users,
@@ -61,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				)}
 				<button
 					onClick={onToggleCollapse}
-					className="p-2 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
+					className="p-2 rounded-lg hover:bg-brand-aureolin/10 transition-colors flex-shrink-0"
 				>
 					{isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
 				</button>
@@ -79,19 +80,19 @@ const Sidebar: React.FC<SidebarProps> = ({
 							onClick={() => onGenreChange(genre.name)}
 							className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-all duration-200 text-left relative group ${
 								isActive
-									? "bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg"
-									: "text-gray-700 hover:bg-gray-100 hover:text-purple-600"
+									? "bg-gradient-to-r from-brand-orange to-brand-purple text-white shadow-lg"
+									: "text-gray-700 hover:bg-brand-aureolin/10 hover:text-brand-purple"
 							}`}
 							title={isCollapsed ? genre.name : undefined}
 						>
 							<Icon size={20} className="flex-shrink-0" />
 							{!isCollapsed && (
-								<span className="font-medium">{genre.name}</span>
+								<span className="font-medium font-quinn">{genre.name}</span>
 							)}
 
 							{/* Tooltip */}
 							{isCollapsed && (
-								<div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+								<div className="absolute left-full ml-2 px-2 py-1 bg-brand-black text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
 									{genre.name}
 								</div>
 							)}
@@ -103,7 +104,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			{/* WhatsApp Button at Bottom */}
 			<div className="p-4 border-t border-gray-200 mt-auto">
 				{isCollapsed ? (
-					<MessageCircleMore className="ml-1" />
+					<MessageCircleMore className="ml-1 text-green-600" />
 				) : (
 					<WhatsAppButton variant="sidebar" />
 				)}
