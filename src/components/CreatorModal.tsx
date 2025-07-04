@@ -1,3 +1,4 @@
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { Creator } from "../types/Creator";
@@ -55,10 +56,10 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 				<div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
 					{/* Header */}
 					<div className="relative">
-						<div className="h-48 bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400 rounded-t-2xl"></div>
+						<div className="h-48 bg-gradient-to-br from-brand-aureolin/20 via-brand-orange/20 to-brand-purple/20 rounded-t-2xl"></div>
 						<button
 							onClick={onClose}
-							className="absolute top-4 right-4 p-2 bg-black/20 hover:bg-black/40 text-white rounded-full transition-colors"
+							className="absolute top-4 right-4 p-2 bg-brand-black/20 hover:bg-brand-black/40 text-white rounded-full transition-colors"
 						>
 							<X size={20} />
 						</button>
@@ -78,16 +79,16 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 						{/* Basic Info */}
 						<div className="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-6">
 							<div>
-								<h2 className="text-3xl font-bold text-gray-900 mb-2">
+								<h2 className="text-3xl font-bold text-brand-black mb-2 font-quinn">
 									{creator.name}
 								</h2>
 								<div className="flex items-center gap-4 text-gray-600 mb-4">
-									<span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+									<span className="bg-brand-aureolin/20 text-brand-purple px-3 py-1 rounded-full text-sm font-medium font-quinn">
 										{creator.genre}
 									</span>
 									<div className="flex items-center gap-1">
-										<MapPin size={16} />
-										<span>{creator.location}</span>
+										<MapPin size={16} className="text-brand-orange" />
+										<span className="font-quinn">{creator.location}</span>
 									</div>
 								</div>
 							</div>
@@ -96,7 +97,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 								{creator.phoneNumber && (
 									<button
 										onClick={handleContactCreator}
-										className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+										className="flex items-center gap-2 bg-brand-orange hover:bg-brand-orange/80 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-quinn"
 									>
 										<MessageCircle size={16} />
 										<span>Contact Creator</span>
@@ -107,7 +108,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 									href={creator.socialLink}
 									target="_blank"
 									rel="noopener noreferrer"
-									className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+									className="flex items-center gap-2 bg-gradient-to-r from-brand-purple to-brand-orange text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-quinn"
 								>
 									<ExternalLink size={16} />
 									<span>Visit {creator.platform}</span>
@@ -117,43 +118,43 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 
 						{/* Quick Stats */}
 						<div className="grid grid-cols-3 gap-4 mb-6">
-							<div className="bg-gradient-to-br from-blue-50 to-blue-100 pt-4 pb-4 rounded-xl text-center">
+							<div className="bg-gradient-to-br from-brand-aureolin/10 to-brand-aureolin/20 pt-4 pb-4 rounded-xl text-center">
 								<div className="flex items-center justify-center mb-2">
-									<Users className="text-blue-500" size={20} />
+									<Users className="text-brand-purple" size={20} />
 								</div>
-								<div className="text-2xl font-bold text-blue-600">
+								<div className="text-2xl font-bold text-brand-black font-quinn">
 									{formatNumber(creator.details?.analytics?.followers || 0)}
 								</div>
-								<div className="text-sm text-blue-500">Followers</div>
+								<div className="text-sm text-brand-purple font-quinn">Followers</div>
 							</div>
 
-							<div className="bg-gradient-to-br from-green-50 to-green-100 pt-4 pb-4 rounded-xl text-center">
+							<div className="bg-gradient-to-br from-brand-orange/10 to-brand-orange/20 pt-4 pb-4 rounded-xl text-center">
 								<div className="flex items-center justify-center mb-2">
-									<Eye className="text-green-500" size={20} />
+									<Eye className="text-brand-orange" size={20} />
 								</div>
-								<div className="text-2xl font-bold text-green-600">
+								<div className="text-2xl font-bold text-brand-black font-quinn">
 									{formatNumber(creator.details?.analytics?.totalViews || 0)}
 								</div>
-								<div className="text-sm text-green-500">Total Views</div>
+								<div className="text-sm text-brand-orange font-quinn">Total Views</div>
 							</div>
 
-							<div className="bg-gradient-to-br from-purple-50 to-purple-100 pt-4 pb-4 rounded-xl text-center">
+							<div className="bg-gradient-to-br from-brand-purple/10 to-brand-purple/20 pt-4 pb-4 rounded-xl text-center">
 								<div className="flex items-center justify-center mb-2">
-									<TrendingUp className="text-purple-500" size={20} />
+									<TrendingUp className="text-brand-purple" size={20} />
 								</div>
-								<div className="text-2xl font-bold text-purple-600">
+								<div className="text-2xl font-bold text-brand-black font-quinn">
 									{formatNumber(creator?.details?.analytics?.averageViews) || 0}
 								</div>
-								<div className="text-sm text-purple-500">Avg Views</div>
+								<div className="text-sm text-brand-purple font-quinn">Avg Views</div>
 							</div>
 						</div>
 
 						{/* Bio */}
 						<div className="mb-6">
-							<h3 className="text-lg font-semibold text-gray-900 mb-3">
+							<h3 className="text-lg font-semibold text-brand-black mb-3 font-quinn">
 								About
 							</h3>
-							<p className="text-gray-600 leading-relaxed whitespace-pre-wrap">
+							<p className="text-gray-600 leading-relaxed whitespace-pre-wrap font-quinn">
 								{creator.details?.bio || "No bio available"}
 							</p>
 						</div>
@@ -161,7 +162,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 						{/* Media Gallery */}
 						{creator.details?.media && creator.details.media.length > 0 && (
 							<div className="mb-6">
-								<h3 className="text-lg font-semibold text-gray-900 mb-4">
+								<h3 className="text-lg font-semibold text-brand-black mb-4 font-quinn">
 									Photos & Videos ({creator.details.media.length})
 								</h3>
 								<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -182,7 +183,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 														<Play className="text-white" size={24} />
 													</div>
 													<div className="absolute top-2 left-2">
-														<div className="bg-black/70 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
+														<div className="bg-brand-black/70 text-white px-2 py-1 rounded text-xs flex items-center gap-1 font-quinn">
 															<Play size={10} />
 															Video
 														</div>
@@ -211,7 +212,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 							<div className="fixed bottom-10 md:bottom-6 right-6 z-50">
 								<button
 									onClick={handleVisitMediaKit}
-									className="group bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+									className="group bg-gradient-to-r from-brand-purple to-brand-orange text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 font-quinn"
 									title="Visit Media Kit"
 								>
 									<FileText size={18} />
