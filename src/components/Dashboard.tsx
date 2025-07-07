@@ -1,4 +1,3 @@
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -132,18 +131,9 @@ const Dashboard: React.FC<DashboardProps> = ({
 
 	if (isLoading) {
 		return (
-			<div className="flex flex-col items-center justify-center h-full space-y-6 font-poppins">
-				<div className="relative">
-					<Loader2 className="h-12 w-12 animate-spin text-brand-orange" />
-				</div>
-				<div className="text-center space-y-2">
-					<h3 className="text-lg font-semibold text-brand-black font-anton">
-						Loading Creators...
-					</h3>
-					<p className="text-sm text-gray-600 max-w-md">
-						Our server is starting up. This may take up to 30 seconds for the first load.
-					</p>
-				</div>
+			<div className="flex flex-col items-center justify-center h-full space-y-4 font-poppins">
+				<div className="loader" />
+				<p className="text-sm text-gray-600">Loading creators...</p>
 			</div>
 		);
 	}
