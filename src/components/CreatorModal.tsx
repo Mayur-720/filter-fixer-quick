@@ -1,4 +1,3 @@
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { Creator } from "../types/Creator";
@@ -76,14 +75,13 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 
 					{/* Content */}
 					<div className="pt-20 px-6 pb-6 relative">
-						{/* Basic Info */}
 						<div className="flex flex-col space-y-4 mb-6">
 							<div>
 								<h2 className="text-3xl font-bold text-brand-black mb-2 font-anton">
 									{creator.name}
 								</h2>
 								<div className="flex items-center gap-4 text-gray-600 mb-4">
-									<span className="bg-brand-aureolin text-brand-black px-3 py-1 rounded-full text-sm font-medium">
+									<span className="bg-brand-aureolin text-brand-black px-3 py-1 rounded-full text-sm font-semibold">
 										{creator.genre}
 									</span>
 									<div className="flex items-center gap-1">
@@ -123,7 +121,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 								<div className="flex items-center justify-center mb-2">
 									<Users className="text-brand-purple" size={20} />
 								</div>
-								<div className="text-2xl font-bold text-brand-black">
+								<div className="text-xl md:text-2xl font-bold text-brand-black">
 									{formatNumber(creator.details?.analytics?.followers || 0)}
 								</div>
 								<div className="text-sm text-brand-purple">Followers</div>
@@ -133,7 +131,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 								<div className="flex items-center justify-center mb-2">
 									<Eye className="text-brand-orange" size={20} />
 								</div>
-								<div className="text-2xl font-bold text-brand-black">
+								<div className="text-xl md:text-2xl font-bold text-brand-black">
 									{formatNumber(creator.details?.analytics?.totalViews || 0)}
 								</div>
 								<div className="text-sm text-brand-orange">Total Views</div>
@@ -143,7 +141,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 								<div className="flex items-center justify-center mb-2">
 									<TrendingUp className="text-brand-purple" size={20} />
 								</div>
-								<div className="text-2xl font-bold text-brand-black">
+								<div className="text-xl md:text-2xl font-bold text-brand-black">
 									{formatNumber(creator?.details?.analytics?.averageViews) || 0}
 								</div>
 								<div className="text-sm text-brand-purple">Avg Views</div>
@@ -151,14 +149,6 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 						</div>
 
 						{/* Bio */}
-						<div className="mb-6">
-							<h3 className="text-lg font-semibold text-brand-black mb-3 font-anton">
-								About
-							</h3>
-							<p className="text-gray-600 leading-relaxed whitespace-pre-wrap">
-								{creator.details?.bio || "No bio available"}
-							</p>
-						</div>
 
 						{/* Media Gallery */}
 						{creator.details?.media && creator.details.media.length > 0 && (
@@ -207,7 +197,14 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 								</div>
 							</div>
 						)}
-
+						<div className="mb-6">
+							<h3 className="text-lg font-semibold text-brand-black mb-3 font-anton">
+								About Creator
+							</h3>
+							<p className="text-gray-600 leading-relaxed whitespace-pre-wrap">
+								{creator.details?.bio || "No bio available"}
+							</p>
+						</div>
 						{/* Media Kit Button - Positioned to avoid conflict with WhatsApp button */}
 						{creator.mediaKit && (
 							<div className="fixed bottom-10 md:bottom-6 right-6 z-50">
