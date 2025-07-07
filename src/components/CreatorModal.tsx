@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Creator } from "../types/Creator";
 import {
 	X,
@@ -14,6 +14,7 @@ import {
 	FileText,
 } from "lucide-react";
 import MediaViewer from "./MediaViewer";
+import { trackCreatorView, trackCreatorContact, trackMediaView } from "../utils/analytics";
 
 interface CreatorModalProps {
 	creator: Creator;
@@ -22,6 +23,12 @@ interface CreatorModalProps {
 
 const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 	const [selectedMedia, setSelectedMedia] = useState<any>(null);
+
+	// Track creator view when modal opens
+	useEffect(() => {
+		trackCreatorView(creator.name, creator.genre);
+	}, [creator.name, creator.genre]);
+
 	const formatNumber = (num: number | undefined | null) => {
 		if (!num || isNaN(num)) return "0";
 		if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
@@ -30,6 +37,9 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 	};
 
 	const handleContactCreator = () => {
+		// Track contact event
+		trackCreatorContact(creator.name, 'whatsapp');
+		
 		if (creator.phoneNumber) {
 			// Remove any non-digit characters and format for WhatsApp
 			const cleanPhone = creator.phoneNumber.replace(/\D/g, "");
@@ -43,10 +53,24 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 		}
 	};
 
+	const handleVisitSocial = () => {
+		// Track social visit
+		trackCreatorContact(creator.name, creator.platform.toLowerCase());
+	};
+
 	const handleVisitMediaKit = () => {
+		// Track media kit visit
+		trackCreatorContact(creator.name, 'media_kit');
+		
 		if (creator.mediaKit) {
 			window.open(creator.mediaKit, "_blank");
 		}
+	};
+
+	const handleMediaClick = (media: any) => {
+		// Track media view
+		trackMediaView(creator.name, media.type);
+		setSelectedMedia(media);
 	};
 
 	return (
@@ -75,8 +99,8 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 
 					{/* Content */}
 					<div className="pt-20 px-6 pb-6 relative">
-						<div className="flex flex-col space-y-4 mb-6">
-							<div>
+						<div className="flex flex-col md:flex-row md:items-start md:justify-between space-y-4 md:space-y-0 mb-6">
+							<div className="flex-1">
 								<h2 className="text-3xl font-bold text-brand-black mb-2 font-anton">
 									{creator.name}
 								</h2>
@@ -91,15 +115,16 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 								</div>
 							</div>
 
-							{/* Action Buttons - Responsive Layout */}
-							<div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+							{/* Action Buttons - Mobile: stacked under name, Desktop: side by side smaller */}
+							<div className="flex flex-col md:flex-row gap-2 md:gap-2 md:ml-4">
 								{creator.phoneNumber && (
 									<button
 										onClick={handleContactCreator}
-										className="flex items-center justify-center gap-2 bg-brand-orange hover:bg-brand-orange/80 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-sm sm:text-base font-medium"
+										className="flex items-center justify-center gap-2 bg-brand-orange hover:bg-brand-orange/80 text-white px-4 py-2.5 md:px-3 md:py-2 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-sm font-medium"
 									>
 										<MessageCircle size={16} />
-										<span>Contact Creator</span>
+										<span className="md:hidden lg:inline">Contact Creator</span>
+										<span className="hidden md:inline lg:hidden">Contact</span>
 									</button>
 								)}
 
@@ -107,10 +132,12 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 									href={creator.socialLink}
 									target="_blank"
 									rel="noopener noreferrer"
-									className="flex items-center justify-center gap-2 bg-brand-purple hover:bg-brand-purple/80 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-sm sm:text-base font-medium"
+									onClick={handleVisitSocial}
+									className="flex items-center justify-center gap-2 bg-brand-purple hover:bg-brand-purple/80 text-white px-4 py-2.5 md:px-3 md:py-2 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-sm font-medium"
 								>
 									<ExternalLink size={16} />
-									<span>Visit {creator.platform}</span>
+									<span className="md:hidden lg:inline">Visit {creator.platform}</span>
+									<span className="hidden md:inline lg:hidden">Visit</span>
 								</a>
 							</div>
 						</div>
@@ -148,8 +175,6 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 							</div>
 						</div>
 
-						{/* Bio */}
-
 						{/* Media Gallery */}
 						{creator.details?.media && creator.details.media.length > 0 && (
 							<div className="mb-6">
@@ -161,7 +186,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 										<div
 											key={media.id || index}
 											className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden cursor-pointer group hover:shadow-lg transition-all duration-300"
-											onClick={() => setSelectedMedia(media)}
+											onClick={() => handleMediaClick(media)}
 										>
 											{media.type === "video" ? (
 												<>
