@@ -124,9 +124,9 @@ const Dashboard: React.FC<DashboardProps> = ({
 
 	if (isLoading) {
 		return (
-			<div className="flex flex-col items-center justify-center h-full space-y-4">
+			<div className="flex flex-col items-center justify-center h-full space-y-4 font-poppins">
 				<div className="loader" />
-				<p className="text-sm text-gray-600 font-quinn">Loading creators...</p>
+				<p className="text-sm text-gray-600">Loading creators...</p>
 			</div>
 		);
 	}
@@ -136,14 +136,14 @@ const Dashboard: React.FC<DashboardProps> = ({
 	}
 
 	return (
-		<div className="flex-1 overflow-auto">
+		<div className="flex-1 overflow-auto font-poppins">
 			<div className="max-w-full mx-auto px-3 sm:px-4 lg:px-6 py-3">
 				{/* Header */}
 				<div className="mb-4">
-					<h1 className="text-xl font-bold text-brand-black mb-1 font-quinn">
+					<h1 className="text-xl font-bold text-brand-black mb-1 font-anton">
 						{activeGenre}
 					</h1>
-					<p className="text-gray-600 text-xs lg:text-base font-quinn">
+					<p className="text-gray-600 text-xs lg:text-base">
 						Discover amazing content creators and collaborate with them
 					</p>
 				</div>
@@ -156,12 +156,12 @@ const Dashboard: React.FC<DashboardProps> = ({
 							placeholder="Search creators by name or tags..."
 							value={searchTerm}
 							onChange={(e) => setSearchTerm(e.target.value)}
-							className="pl-9 pr-4 py-2 w-full h-9 border-gray-300 focus:border-brand-orange focus:ring-brand-orange/20"
+							className="pl-9 pr-4 py-2 w-full h-9 border-gray-300 focus:border-brand-orange focus:ring-brand-orange/20 font-poppins"
 						/>
 					</div>
 					<button
 						onClick={() => setIsFilterOpen(true)}
-						className={`flex items-center gap-2 px-3 py-1.5 rounded-md border transition-colors text-sm font-quinn ${
+						className={`flex items-center gap-2 px-3 py-1.5 rounded-md border transition-colors text-sm ${
 							hasActiveFilters
 								? "bg-brand-purple/10 border-brand-purple text-brand-purple"
 								: "bg-white border-gray-300 text-gray-700 hover:bg-brand-aureolin/10 hover:border-brand-orange"
@@ -186,7 +186,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 
 				{/* Results count */}
 				<div className="mb-4">
-					<p className="text-xs text-gray-600 font-quinn">
+					<p className="text-xs text-gray-600">
 						{filteredCreators.length} creator
 						{filteredCreators.length !== 1 ? "s" : ""} found
 						{searchTerm && ` for "${searchTerm}"`}
@@ -210,17 +210,17 @@ const Dashboard: React.FC<DashboardProps> = ({
 							<div className="text-gray-400 mb-3">
 								<Search className="h-10 w-10 mx-auto" />
 							</div>
-							<h3 className="text-lg font-medium text-brand-black mb-2 font-quinn">
+							<h3 className="text-lg font-medium text-brand-black mb-2 font-anton">
 								No creators found
 							</h3>
-							<p className="text-gray-600 mb-4 text-sm font-quinn">
+							<p className="text-gray-600 mb-4 text-sm">
 								Try adjusting your search terms or filters to find more
 								creators.
 							</p>
 							{hasActiveFilters && (
 								<button
 									onClick={handleClearFilters}
-									className="text-brand-orange hover:text-brand-purple font-medium text-sm font-quinn transition-colors"
+									className="text-brand-orange hover:text-brand-purple font-medium text-sm transition-colors"
 								>
 									Clear all filters
 								</button>

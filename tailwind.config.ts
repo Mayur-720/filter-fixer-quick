@@ -73,7 +73,7 @@ export default {
 				}
 			},
 			fontFamily: {
-				'quinn': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+				'poppins': ['Poppins', 'system-ui', '-apple-system', 'sans-serif'],
 				'anton': ['Anton', 'sans-serif'],
 			},
 			borderRadius: {

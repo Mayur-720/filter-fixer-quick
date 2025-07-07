@@ -39,7 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		<div
 			className={`fixed left-0 top-0 h-full bg-brand-black/5 shadow-xl border-r border-brand-black/10 transition-all duration-300 z-30 ${
 				isCollapsed ? "w-16" : "w-64"
-			} flex flex-col`}
+			} flex flex-col font-poppins`}
 		>
 			{/* Header */}
 			<div className="p-4 border-b border-brand-black/10 flex items-center justify-between">
@@ -87,12 +87,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 						>
 							<Icon size={20} className="flex-shrink-0" />
 							{!isCollapsed && (
-								<span className="font-medium font-anton">{genre.name}</span>
+								<span className="font-medium">{genre.name}</span>
 							)}
 
 							{/* Tooltip */}
 							{isCollapsed && (
-								<div className="absolute left-full ml-2 px-2 py-1 bg-brand-black text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50 font-anton">
+								<div className="absolute left-full ml-2 px-2 py-1 bg-brand-black text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
 									{genre.name}
 								</div>
 							)}

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Creator } from "../types/Creator";
 import {
@@ -41,7 +42,7 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 	};
 
 	return (
-		<div className="group relative">
+		<div className="group relative font-poppins">
 			<button
 				onClick={onClick}
 				className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 w-full text-left border border-gray-100 hover:border-brand-orange/30 focus:outline-none focus:ring-2 focus:ring-brand-orange/20 relative overflow-hidden group-hover:scale-[1.02]"
@@ -92,12 +93,12 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 				<div className="p-3 sm:p-4 flex flex-col gap-2.5 sm:gap-3">
 					<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
 						<div className="flex-1 min-w-0">
-							<h3 className="text-base sm:text-lg font-semibold text-brand-black group-hover:text-brand-orange transition-colors duration-300 truncate font-quinn">
+							<h3 className="text-base sm:text-lg font-semibold text-brand-black group-hover:text-brand-orange transition-colors duration-300 truncate">
 								{creator.name}
 							</h3>
 							<div className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-500 mt-0.5 sm:mt-1">
 								<MapPin size={10} className="sm:w-3 sm:h-3 flex-shrink-0" />
-								<span className="truncate font-quinn">{creator.location}</span>
+								<span className="truncate">{creator.location}</span>
 							</div>
 						</div>
 						<a
@@ -106,7 +107,7 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 							}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="flex items-center justify-center gap-1 sm:gap-1.5 bg-gray-100 hover:bg-brand-aureolin/20 text-gray-700 hover:text-brand-purple px-2.5 py-1.5 sm:px-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-sm self-end sm:self-auto font-quinn"
+							className="flex items-center justify-center gap-1 sm:gap-1.5 bg-gray-100 hover:bg-brand-aureolin/20 text-gray-700 hover:text-brand-purple px-2.5 py-1.5 sm:px-3 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-sm self-end sm:self-auto"
 							aria-label={`Visit ${creator.name}'s ${
 								creator.platform || "Instagram"
 							} profile`}

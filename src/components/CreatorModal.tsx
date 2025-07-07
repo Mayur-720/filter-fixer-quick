@@ -52,7 +52,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 
 	return (
 		<>
-			<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+			<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 font-poppins">
 				<div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
 					{/* Header */}
 					<div className="relative">
@@ -83,12 +83,12 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 									{creator.name}
 								</h2>
 								<div className="flex items-center gap-4 text-gray-600 mb-4">
-									<span className="bg-brand-aureolin text-brand-black px-3 py-1 rounded-full text-sm font-medium font-anton">
+									<span className="bg-brand-aureolin text-brand-black px-3 py-1 rounded-full text-sm font-medium">
 										{creator.genre}
 									</span>
 									<div className="flex items-center gap-1">
 										<MapPin size={16} className="text-brand-orange" />
-										<span className="font-anton">{creator.location}</span>
+										<span>{creator.location}</span>
 									</div>
 								</div>
 							</div>
@@ -97,7 +97,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 								{creator.phoneNumber && (
 									<button
 										onClick={handleContactCreator}
-										className="flex items-center gap-2 bg-brand-orange hover:bg-brand-orange/80 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-anton"
+										className="flex items-center gap-2 bg-brand-orange hover:bg-brand-orange/80 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105"
 									>
 										<MessageCircle size={16} />
 										<span>Contact Creator</span>
@@ -108,7 +108,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 									href={creator.socialLink}
 									target="_blank"
 									rel="noopener noreferrer"
-									className="flex items-center gap-2 bg-brand-purple hover:bg-brand-purple/80 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-anton"
+									className="flex items-center gap-2 bg-brand-purple hover:bg-brand-purple/80 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105"
 								>
 									<ExternalLink size={16} />
 									<span>Visit {creator.platform}</span>
@@ -122,30 +122,30 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 								<div className="flex items-center justify-center mb-2">
 									<Users className="text-brand-purple" size={20} />
 								</div>
-								<div className="text-2xl font-bold text-brand-black font-anton">
+								<div className="text-2xl font-bold text-brand-black">
 									{formatNumber(creator.details?.analytics?.followers || 0)}
 								</div>
-								<div className="text-sm text-brand-purple font-anton">Followers</div>
+								<div className="text-sm text-brand-purple">Followers</div>
 							</div>
 
 							<div className="bg-gradient-to-br from-brand-orange/10 to-brand-orange/20 pt-4 pb-4 rounded-xl text-center">
 								<div className="flex items-center justify-center mb-2">
 									<Eye className="text-brand-orange" size={20} />
 								</div>
-								<div className="text-2xl font-bold text-brand-black font-anton">
+								<div className="text-2xl font-bold text-brand-black">
 									{formatNumber(creator.details?.analytics?.totalViews || 0)}
 								</div>
-								<div className="text-sm text-brand-orange font-anton">Total Views</div>
+								<div className="text-sm text-brand-orange">Total Views</div>
 							</div>
 
 							<div className="bg-gradient-to-br from-brand-purple/10 to-brand-purple/20 pt-4 pb-4 rounded-xl text-center">
 								<div className="flex items-center justify-center mb-2">
 									<TrendingUp className="text-brand-purple" size={20} />
 								</div>
-								<div className="text-2xl font-bold text-brand-black font-anton">
+								<div className="text-2xl font-bold text-brand-black">
 									{formatNumber(creator?.details?.analytics?.averageViews) || 0}
 								</div>
-								<div className="text-sm text-brand-purple font-anton">Avg Views</div>
+								<div className="text-sm text-brand-purple">Avg Views</div>
 							</div>
 						</div>
 
@@ -154,7 +154,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 							<h3 className="text-lg font-semibold text-brand-black mb-3 font-anton">
 								About
 							</h3>
-							<p className="text-gray-600 leading-relaxed whitespace-pre-wrap font-anton">
+							<p className="text-gray-600 leading-relaxed whitespace-pre-wrap">
 								{creator.details?.bio || "No bio available"}
 							</p>
 						</div>
@@ -183,7 +183,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 														<Play className="text-white" size={24} />
 													</div>
 													<div className="absolute top-2 left-2">
-														<div className="bg-brand-black/70 text-white px-2 py-1 rounded text-xs flex items-center gap-1 font-quinn">
+														<div className="bg-brand-black/70 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
 															<Play size={10} />
 															Video
 														</div>
@@ -212,7 +212,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 							<div className="fixed bottom-10 md:bottom-6 right-6 z-50">
 								<button
 									onClick={handleVisitMediaKit}
-									className="group bg-brand-purple hover:bg-brand-purple/80 text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 font-anton"
+									className="group bg-brand-purple hover:bg-brand-purple/80 text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
 									title="Visit Media Kit"
 								>
 									<FileText size={18} />

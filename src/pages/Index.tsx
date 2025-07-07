@@ -18,7 +18,7 @@ const Index = () => {
 	};
 
 	return (
-		<div className="min-h-screen bg-gray-50">
+		<div className="min-h-screen bg-gray-50 font-poppins">
 			<div className="flex h-screen">
 				{/* Desktop Sidebar */}
 				<div className="hidden md:block">
@@ -68,9 +68,9 @@ const Index = () => {
 										<button
 											key={genre.name}
 											onClick={() => handleGenreChange(genre.name)}
-											className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-all duration-200 text-left ${
+											className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-all duration-200 text-left font-poppins ${
 												isActive
-													? "bg-gradient-to-r from-brand-orange to-brand-purple text-white shadow-lg"
+													? "bg-brand-orange text-white shadow-lg"
 													: "text-gray-700 hover:bg-brand-aureolin/10 hover:text-brand-purple"
 											}`}
 										>
@@ -91,7 +91,7 @@ const Index = () => {
 				>
 					{/* Mobile header */}
 					<div className="md:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between">
-						<h1 className="text-lg font-bold bg-gradient-to-r from-brand-orange to-brand-purple bg-clip-text text-transparent font-quinn">
+						<h1 className="text-lg font-bold bg-gradient-to-r from-brand-orange to-brand-purple bg-clip-text text-transparent font-anton">
 							Creators Dream
 						</h1>
 						<button
