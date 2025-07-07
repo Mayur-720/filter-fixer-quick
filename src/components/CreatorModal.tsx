@@ -77,7 +77,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 					{/* Content */}
 					<div className="pt-20 px-6 pb-6 relative">
 						{/* Basic Info */}
-						<div className="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-6">
+						<div className="flex flex-col space-y-4 mb-6">
 							<div>
 								<h2 className="text-3xl font-bold text-brand-black mb-2 font-anton">
 									{creator.name}
@@ -93,11 +93,12 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 								</div>
 							</div>
 
-							<div className="flex gap-3">
+							{/* Action Buttons - Responsive Layout */}
+							<div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
 								{creator.phoneNumber && (
 									<button
 										onClick={handleContactCreator}
-										className="flex items-center gap-2 bg-brand-orange hover:bg-brand-orange/80 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+										className="flex items-center justify-center gap-2 bg-brand-orange hover:bg-brand-orange/80 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-sm sm:text-base font-medium"
 									>
 										<MessageCircle size={16} />
 										<span>Contact Creator</span>
@@ -108,7 +109,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 									href={creator.socialLink}
 									target="_blank"
 									rel="noopener noreferrer"
-									className="flex items-center gap-2 bg-brand-purple hover:bg-brand-purple/80 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+									className="flex items-center justify-center gap-2 bg-brand-purple hover:bg-brand-purple/80 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-sm sm:text-base font-medium"
 								>
 									<ExternalLink size={16} />
 									<span>Visit {creator.platform}</span>
