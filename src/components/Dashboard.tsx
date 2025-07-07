@@ -5,8 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import CreatorCard from "./CreatorCard";
 import { Creator } from "../types/Creator";
 import { creatorAPI } from "../services/api";
-import { mockCreators } from "../data/mockData";
-import { Loader2, Search, Filter } from "lucide-react";
+import { Loader2, Search, Filter, AlertCircle, RefreshCw } from "lucide-react";
 import { Input } from "./ui/input";
 import FilterDialog from "./FilterDialog";
 import WhatsAppButton from "./WhatsAppButton";
@@ -45,9 +44,14 @@ const Dashboard: React.FC<DashboardProps> = ({
 		data: creators = [],
 		isLoading,
 		error,
+		refetch,
+		isRefetching,
 	} = useQuery({
 		queryKey: ["creators"],
 		queryFn: () => creatorAPI.getAll(),
+		retry: 3,
+		retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+		staleTime: 5 * 60 * 1000, // 5 minutes
 		meta: {
 			onError: (error: any) => {
 				console.error("Failed to fetch creators:", error);
@@ -55,11 +59,12 @@ const Dashboard: React.FC<DashboardProps> = ({
 		},
 	});
 
-	const allCreators: Creator[] =
-		Array.isArray(creators) && creators.length > 0 ? creators : mockCreators;
-
 	const filteredCreators = useMemo(() => {
-		return allCreators.filter((creator) => {
+		if (!Array.isArray(creators) || creators.length === 0) {
+			return [];
+		}
+
+		return creators.filter((creator) => {
 			// Genre filter
 			if (activeGenre !== "All Creators") {
 				const creatorGenre = creator.genre?.toLowerCase().trim() || "";
@@ -71,7 +76,6 @@ const Dashboard: React.FC<DashboardProps> = ({
 			if (searchTerm.trim()) {
 				const searchLower = searchTerm.toLowerCase();
 				const nameMatch = creator.name.toLowerCase().includes(searchLower);
-
 				if (!nameMatch) return false;
 			}
 
@@ -105,7 +109,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 
 			return true;
 		});
-	}, [allCreators, activeGenre, searchTerm, filters]);
+	}, [creators, activeGenre, searchTerm, filters]);
 
 	const handleClearFilters = () => {
 		setFilters({
@@ -122,17 +126,67 @@ const Dashboard: React.FC<DashboardProps> = ({
 		filters.followersRange[0] !== 0 ||
 		filters.followersRange[1] !== 1000;
 
+	const handleRetry = () => {
+		refetch();
+	};
+
 	if (isLoading) {
 		return (
-			<div className="flex flex-col items-center justify-center h-full space-y-4 font-poppins">
-				<div className="loader" />
-				<p className="text-sm text-gray-600">Loading creators...</p>
+			<div className="flex flex-col items-center justify-center h-full space-y-6 font-poppins">
+				<div className="relative">
+					<Loader2 className="h-12 w-12 animate-spin text-brand-orange" />
+				</div>
+				<div className="text-center space-y-2">
+					<h3 className="text-lg font-semibold text-brand-black font-anton">
+						Loading Creators...
+					</h3>
+					<p className="text-sm text-gray-600 max-w-md">
+						Our server is starting up. This may take up to 30 seconds for the first load.
+					</p>
+				</div>
 			</div>
 		);
 	}
 
 	if (error) {
-		console.error("Error loading creators:", error);
+		return (
+			<div className="flex flex-col items-center justify-center h-full space-y-6 font-poppins p-6">
+				<div className="text-center space-y-4">
+					<AlertCircle className="h-16 w-16 text-red-500 mx-auto" />
+					<h3 className="text-xl font-semibold text-brand-black font-anton">
+						Failed to Load Creators
+					</h3>
+					<div className="space-y-2">
+						<p className="text-gray-600 max-w-md">
+							{error instanceof Error 
+								? error.message 
+								: "There was an error loading the creators. This might be due to server startup time."
+							}
+						</p>
+						<p className="text-sm text-gray-500">
+							Please try again or wait a moment for the server to fully start.
+						</p>
+					</div>
+					<button
+						onClick={handleRetry}
+						disabled={isRefetching}
+						className="inline-flex items-center gap-2 px-6 py-3 bg-brand-orange hover:bg-brand-orange/90 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+					>
+						{isRefetching ? (
+							<>
+								<Loader2 className="h-4 w-4 animate-spin" />
+								Retrying...
+							</>
+						) : (
+							<>
+								<RefreshCw className="h-4 w-4" />
+								Try Again
+							</>
+						)}
+					</button>
+				</div>
+			</div>
+		);
 	}
 
 	return (
@@ -205,7 +259,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 						))}
 					</div>
 
-					{filteredCreators.length === 0 && (
+					{filteredCreators.length === 0 && !isLoading && (
 						<div className="text-center py-8">
 							<div className="text-gray-400 mb-3">
 								<Search className="h-10 w-10 mx-auto" />
