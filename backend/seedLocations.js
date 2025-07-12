@@ -1,4 +1,3 @@
-
 require("dotenv").config();
 
 const mongoose = require("mongoose");
@@ -13,7 +12,6 @@ const predefinedLocations = [
 	"Ajmer", // Rajasthan, cultural center
 	"Akola", // Maharashtra, commercial hub
 	"Aligarh", // Uttar Pradesh, educational hub
-	"Allahabad (Prayagraj)", // Million-plus, cultural hub (1.1M, 2011)
 	"Alwar", // Rajasthan, historical city
 	"Amaravati", // Andhra Pradesh capital
 	"Ambala", // Haryana, industrial city
@@ -22,8 +20,7 @@ const predefinedLocations = [
 	"Asansol", // Million-plus, industrial city (1.2M, 2011)
 	"Aurangabad", // Million-plus, industrial hub (1.2M, 2011)
 	"Bareilly", // Million-plus, commercial hub (1M, 2011)
-	"Belgaum (Belagavi)", // Karnataka, industrial city
-	"Bengaluru (Bangalore)", // Million-plus, IT hub (~8.5M, 2011; ~13M, 2023)[](https://www.statista.com/statistics/275378/largest-cities-in-india/)
+	"Bangalore", // Million-plus, IT hub (~8.5M, 2011; ~13M, 2023)[](https://www.statista.com/statistics/275378/largest-cities-in-india/)
 	"Bhagalpur", // Bihar, commercial center
 	"Bharatpur", // Rajasthan, historical city
 	"Bhavnagar", // Gujarat, port city
@@ -55,9 +52,9 @@ const predefinedLocations = [
 	"Gaya", // Bihar, cultural city
 	"Ghaziabad", // Million-plus, industrial hub (1.6M, 2011)
 	"Gorakhpur", // Uttar Pradesh, commercial hub
-	"Gulbarga (Kalaburagi)", // Karnataka, educational city
+	"Gulbarga", // Karnataka, educational city
 	"Guntur", // Andhra Pradesh, commercial hub
-	"Gurugram (Gurgaon)", // Million-plus, IT/financial hub
+	"Gurgaon", // Million-plus, IT/financial hub
 	"Guwahati", // Million-plus, Northeast gateway (1M, 2011)
 	"Gwalior", // Million-plus, historical city (1.1M, 2011)
 	"Haldia", // West Bengal, port city
@@ -97,13 +94,13 @@ const predefinedLocations = [
 	"Ludhiana", // Million-plus, industrial hub (1.6M, 2011)
 	"Madurai", // Million-plus, cultural city (1.5M, 2011)
 	"Malappuram", // Kerala, educational hub
-	"Mangalore (Mangaluru)", // Karnataka, port city
+	"Mangalore", // Karnataka, port city
 	"Mathura", // Uttar Pradesh, cultural city
 	"Meerut", // Million-plus, commercial hub (1.3M, 2011)
 	"Moradabad", // Uttar Pradesh, industrial city
 	"Mumbai", // Million-plus, financial capital (~12.4M, 2011; ~21.7M, 2023)[](https://www.statista.com/statistics/275378/largest-cities-in-india/)
 	"Muzaffarpur", // Bihar, commercial hub
-	"Mysore (Mysuru)", // Karnataka, cultural city
+	"Mysore", // Karnataka, cultural city
 	"Nagpur", // Million-plus, Maharashtra hub (2.4M, 2011)
 	"Nanded", // Maharashtra, cultural city
 	"Nashik", // Million-plus, industrial city (1.5M, 2011)
@@ -172,10 +169,10 @@ const seedLocations = async () => {
 				// Update existing location to ensure it's active and predefined
 				await Location.updateOne(
 					{ _id: existingLocation._id },
-					{ 
-						isPredefined: true, 
+					{
+						isPredefined: true,
 						isActive: true,
-						createdBy: "system" 
+						createdBy: "system",
 					}
 				);
 				console.log(`🔄 Updated: ${locationName}`);
