@@ -1,4 +1,3 @@
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
 import { Creator } from "../types/Creator";
@@ -86,7 +85,7 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 
 	return (
 		<>
-			<div 
+			<div
 				className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 font-poppins"
 				onClick={handleBackdropClick}
 			>
@@ -94,10 +93,10 @@ const CreatorModal: React.FC<CreatorModalProps> = ({ creator, onClose }) => {
 					{/* Header with Banner Image */}
 					<div className="relative">
 						<div className="h-48 bg-gradient-to-br from-brand-aureolin/20 via-brand-orange/20 to-brand-purple/20 rounded-t-2xl overflow-hidden">
-							<img 
+							<img
 								src="/lovable-uploads/27249619-0749-4ac7-be51-296f36f7b496.png"
 								alt="Banner"
-								className="w-full h-full object-cover"
+								className="w-full h-full object-cover "
 							/>
 						</div>
 						<button
