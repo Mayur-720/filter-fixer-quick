@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Creator } from "../types/Creator";
 import {
@@ -42,10 +41,10 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 	};
 
 	return (
-		<div className="group relative font-poppins">
+		<div className="group relative font-poppins mb-4">
 			<button
 				onClick={onClick}
-				className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 w-full text-left border border-gray-100 hover:border-brand-orange/30 focus:outline-none focus:ring-2 focus:ring-brand-orange/20 relative overflow-hidden group-hover:scale-[1.02]"
+				className="bg-white rounded-xl shadow-lg hover:shadow-lg transition-all duration-300 w-full text-left border border-gray-100 hover:border-brand-orange/30 focus:outline-none focus:ring-2 focus:ring-brand-orange/20 relative overflow-hidden group-hover:scale-[1.02]"
 				aria-label={`View profile of ${creator.name}, ${
 					creator.details?.analytics.followers || 0
 				}K followers on ${creator.platform || "unknown platform"}`}
@@ -54,7 +53,7 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator, onClick }) => {
 				<div className="absolute inset-0 bg-gradient-to-r from-brand-orange/10 to-brand-purple/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
 
 				{/* Avatar Section */}
-				<div className="relative h-48 overflow-hidden rounded-t-xl bg-gradient-to-br from-brand-aureolin/10 to-brand-orange/10">
+				<div className="relative h-40 md:h-56 overflow-hidden rounded-t-xl bg-gradient-to-br from-brand-aureolin/10 to-brand-orange/10">
 					<img
 						src={creator.avatar || "/fallback-avatar.png"}
 						alt={`${creator.name}'s avatar`}
