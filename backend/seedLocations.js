@@ -1,3 +1,4 @@
+
 require("dotenv").config();
 
 const mongoose = require("mongoose");
@@ -164,8 +165,20 @@ const seedLocations = async () => {
 					name: locationName,
 					isPredefined: true,
 					createdBy: "system",
+					isActive: true,
 				});
 				console.log(`✅ Added: ${locationName}`);
+			} else {
+				// Update existing location to ensure it's active and predefined
+				await Location.updateOne(
+					{ _id: existingLocation._id },
+					{ 
+						isPredefined: true, 
+						isActive: true,
+						createdBy: "system" 
+					}
+				);
+				console.log(`🔄 Updated: ${locationName}`);
 			}
 		}
 
