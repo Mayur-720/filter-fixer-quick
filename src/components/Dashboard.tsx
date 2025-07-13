@@ -47,7 +47,17 @@ const Dashboard: React.FC<DashboardProps> = ({
 		isRefetching,
 	} = useQuery({
 		queryKey: ["creators"],
-		queryFn: () => creatorAPI.getAll(),
+		queryFn: async () => {
+			const data = await creatorAPI.getAll();
+			console.log("Raw API response - Total creators:", data.length);
+			console.log("All creators from API:", data.map(c => ({
+				name: c.name,
+				genre: c.genre,
+				platform: c.platform,
+				followers: c.details?.analytics?.followers
+			})));
+			return data;
+		},
 		retry: 3,
 		retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
 		staleTime: 5 * 60 * 1000, // 5 minutes
@@ -63,19 +73,32 @@ const Dashboard: React.FC<DashboardProps> = ({
 			return [];
 		}
 
-		return creators.filter((creator) => {
+		console.log("Filtering creators:", {
+			totalCreators: creators.length,
+			activeGenre,
+			searchTerm,
+			filters
+		});
+
+		const filtered = creators.filter((creator) => {
 			// Genre filter
 			if (activeGenre !== "All Creators") {
 				const creatorGenre = creator.genre?.toLowerCase().trim() || "";
 				const activeGenreNormalized = activeGenre.toLowerCase().trim();
-				if (creatorGenre !== activeGenreNormalized) return false;
+				if (creatorGenre !== activeGenreNormalized) {
+					console.log(`${creator.name} filtered out by genre: ${creatorGenre} !== ${activeGenreNormalized}`);
+					return false;
+				}
 			}
 
 			// Search filter
 			if (searchTerm.trim()) {
 				const searchLower = searchTerm.toLowerCase();
 				const nameMatch = creator.name.toLowerCase().includes(searchLower);
-				if (!nameMatch) return false;
+				if (!nameMatch) {
+					console.log(`${creator.name} filtered out by search: doesn't match ${searchTerm}`);
+					return false;
+				}
 			}
 
 			// Platform filter
@@ -83,6 +106,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 				if (
 					creator.platform?.toLowerCase() !== filters.platform.toLowerCase()
 				) {
+					console.log(`${creator.name} filtered out by platform: ${creator.platform} !== ${filters.platform}`);
 					return false;
 				}
 			}
@@ -92,6 +116,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 				const creatorLocation =
 					creator.location || creator.details?.location || "";
 				if (!filters.locations.includes(creatorLocation)) {
+					console.log(`${creator.name} filtered out by location: ${creatorLocation} not in ${filters.locations}`);
 					return false;
 				}
 			}
@@ -103,11 +128,15 @@ const Dashboard: React.FC<DashboardProps> = ({
 				followersInK < filters.followersRange[0] ||
 				followersInK > filters.followersRange[1]
 			) {
+				console.log(`${creator.name} filtered out by followers: ${followersInK}K not in range [${filters.followersRange[0]}, ${filters.followersRange[1]}]`);
 				return false;
 			}
 
 			return true;
 		});
+
+		console.log("Final filtered creators:", filtered.length);
+		return filtered;
 	}, [creators, activeGenre, searchTerm, filters]);
 
 	const handleClearFilters = () => {
