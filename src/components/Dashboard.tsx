@@ -36,7 +36,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 		platform: "All",
 		locations: [],
 		priceRange: [0, 10000],
-		followersRange: [0, 1000],
+		followersRange: [0, 15000], // Increased to 15M to include all creators
 	});
 
 	const {
@@ -47,17 +47,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 		isRefetching,
 	} = useQuery({
 		queryKey: ["creators"],
-		queryFn: async () => {
-			const data = await creatorAPI.getAll();
-			console.log("Raw API response - Total creators:", data.length);
-			console.log("All creators from API:", data.map(c => ({
-				name: c.name,
-				genre: c.genre,
-				platform: c.platform,
-				followers: c.details?.analytics?.followers
-			})));
-			return data;
-		},
+		queryFn: () => creatorAPI.getAll(),
 		retry: 3,
 		retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
 		staleTime: 5 * 60 * 1000, // 5 minutes
@@ -73,32 +63,19 @@ const Dashboard: React.FC<DashboardProps> = ({
 			return [];
 		}
 
-		console.log("Filtering creators:", {
-			totalCreators: creators.length,
-			activeGenre,
-			searchTerm,
-			filters
-		});
-
-		const filtered = creators.filter((creator) => {
+		return creators.filter((creator) => {
 			// Genre filter
 			if (activeGenre !== "All Creators") {
 				const creatorGenre = creator.genre?.toLowerCase().trim() || "";
 				const activeGenreNormalized = activeGenre.toLowerCase().trim();
-				if (creatorGenre !== activeGenreNormalized) {
-					console.log(`${creator.name} filtered out by genre: ${creatorGenre} !== ${activeGenreNormalized}`);
-					return false;
-				}
+				if (creatorGenre !== activeGenreNormalized) return false;
 			}
 
 			// Search filter
 			if (searchTerm.trim()) {
 				const searchLower = searchTerm.toLowerCase();
 				const nameMatch = creator.name.toLowerCase().includes(searchLower);
-				if (!nameMatch) {
-					console.log(`${creator.name} filtered out by search: doesn't match ${searchTerm}`);
-					return false;
-				}
+				if (!nameMatch) return false;
 			}
 
 			// Platform filter
@@ -106,7 +83,6 @@ const Dashboard: React.FC<DashboardProps> = ({
 				if (
 					creator.platform?.toLowerCase() !== filters.platform.toLowerCase()
 				) {
-					console.log(`${creator.name} filtered out by platform: ${creator.platform} !== ${filters.platform}`);
 					return false;
 				}
 			}
@@ -116,7 +92,6 @@ const Dashboard: React.FC<DashboardProps> = ({
 				const creatorLocation =
 					creator.location || creator.details?.location || "";
 				if (!filters.locations.includes(creatorLocation)) {
-					console.log(`${creator.name} filtered out by location: ${creatorLocation} not in ${filters.locations}`);
 					return false;
 				}
 			}
@@ -128,15 +103,11 @@ const Dashboard: React.FC<DashboardProps> = ({
 				followersInK < filters.followersRange[0] ||
 				followersInK > filters.followersRange[1]
 			) {
-				console.log(`${creator.name} filtered out by followers: ${followersInK}K not in range [${filters.followersRange[0]}, ${filters.followersRange[1]}]`);
 				return false;
 			}
 
 			return true;
 		});
-
-		console.log("Final filtered creators:", filtered.length);
-		return filtered;
 	}, [creators, activeGenre, searchTerm, filters]);
 
 	const handleClearFilters = () => {
@@ -144,7 +115,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 			platform: "All",
 			locations: [],
 			priceRange: [0, 10000],
-			followersRange: [0, 1000],
+			followersRange: [0, 15000], // Updated to match default
 		});
 	};
 
@@ -152,7 +123,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 		filters.platform !== "All" ||
 		filters.locations.length > 0 ||
 		filters.followersRange[0] !== 0 ||
-		filters.followersRange[1] !== 1000;
+		filters.followersRange[1] !== 15000; // Updated to match new default
 
 	const handleRetry = () => {
 		refetch();
@@ -247,7 +218,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 									filters.platform !== "All" ? 1 : 0,
 									filters.locations.length,
 									filters.followersRange[0] !== 0 ||
-									filters.followersRange[1] !== 1000
+									filters.followersRange[1] !== 15000
 										? 1
 										: 0,
 								].reduce((a, b) => a + b, 0)}

@@ -187,9 +187,9 @@ const FilterDialog: React.FC<FilterDialogProps> = ({
 						<Slider
 							value={filters.followersRange}
 							onValueChange={handleFollowersRangeChange}
-							max={1000}
+							max={15000}
 							min={0}
-							step={10}
+							step={100}
 							className="w-full"
 						/>
 					</div>
