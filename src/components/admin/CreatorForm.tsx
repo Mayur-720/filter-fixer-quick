@@ -215,16 +215,10 @@ const CreatorForm: React.FC<CreatorFormProps> = ({
 
 		console.log("Deleting media:", mediaId);
 		try {
-			const response = await fetch(
-				`${API_BASE_URL}/media/${creator._id}/${mediaId}`,
-				{
-					method: "DELETE",
-				}
-			);
-
-			if (!response.ok) {
-				throw new Error("Failed to delete media");
-			}
+			// Import mediaService at the top if not already imported
+			const { mediaService } = await import("../../services/mediaAPI");
+			
+			await mediaService.deleteMedia(creator._id, mediaId);
 
 			toast({
 				title: "Success!",
